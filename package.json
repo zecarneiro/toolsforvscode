@@ -1,0 +1,86 @@
+{
+	"author": {
+		"name": "José C. Noronha"
+	},
+	"publisher": "josecnoronha",
+	"name": "extensionsmanager",
+	"displayName": "extensionsManager",
+	"description": "Extensions Manager",
+	"version": "0.0.2",
+	"engines": {
+		"vscode": "^1.46.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "extensionsmanager.install",
+				"title": "Extensions Manager Profile: Install"
+			},
+			{
+				"command": "extensionsmanager.uninstall",
+				"title": "Extensions Manager Profile: Uninstall"
+			},
+			{
+				"command": "extensionsmanager.menu",
+				"title": "Extensions Manager Profile: Menu"
+			},
+			{
+				"command": "extensionsmanager.updatedconfig",
+				"title": "Extensions Manager Profile: Get Updated Config"
+			}
+		],
+		"configuration": {
+			"title": "Extensions Manager Profile",
+			"properties": {
+				"extensionsmanager.jsonFile": {
+					"type": "string",
+					"default": null,
+					"description": "Path of json file. Format: JSON Data: { ignored: ['ext1', ...], profiles: {name1: ['ext1', ...], ...}"
+				},
+				"extensionsmanager.multiple-profile": {
+					"type": "boolean",
+					"default": false,
+					"description": "Can activate multiple profile"
+				},
+				"extensionsmanager.plataform": {
+					"type": "string",
+					"default": "Windows",
+					"enum": ["Windows", "Linux"],
+					"description": "Platform necessary to choose command to use on install or uninstall extensions"
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint src --ext ts",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^7.0.2",
+		"@types/node": "^13.11.0",
+		"@types/vscode": "^1.46.0",
+		"@typescript-eslint/eslint-plugin": "^2.30.0",
+		"@typescript-eslint/parser": "^2.30.0",
+		"eslint": "^6.8.0",
+		"glob": "^7.1.6",
+		"mocha": "^7.1.2",
+		"typescript": "^3.8.3",
+		"vscode-test": "^1.3.0"
+	},
+	"dependencies": {
+		"@types/shelljs": "^0.8.8",
+		"shelljs": "^0.8.4"
+	}
+}
