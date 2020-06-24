@@ -47,9 +47,18 @@ export class GenericTools {
 
     printOnOutputChannel(message: string, isNewLine = true) {
         if (isNewLine) {
-            const todayNow = new Date();
-            let dateFormated = todayNow.getFullYear() + "-" + todayNow.getMonth() + "-" + todayNow.getDay() + " ";
-            dateFormated += todayNow.getHours() + ":" + todayNow.getMinutes() + ":" + todayNow.getSeconds() + "." + todayNow.getMilliseconds();
+            const dateObject = new Date();
+            let dateNow = {
+                year: dateObject.getFullYear(),
+                month: dateObject.getMonth() + 1,
+                day: dateObject.getDate(),
+                hour: dateObject.getHours(),
+                minute: dateObject.getMinutes(),
+                second: dateObject.getSeconds(),
+                millisecond: dateObject.getMilliseconds()
+            }
+            let dateFormated = dateNow.year + "-" + dateNow.month + "-" + dateNow.day + " ";
+            dateFormated += dateNow.hour + ":" + dateNow.minute + ":" + dateNow.second + "." + dateNow.millisecond;
             
             message = "\[" + dateFormated + "\] " + message;
 
