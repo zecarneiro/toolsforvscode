@@ -17,6 +17,11 @@ export function activate(context: vscode.ExtensionContext) {
 		// Init Menu object
 		let extensionsProfileManager = new ExtensionsProfileManager(context);
 
+		// Insert reload command
+		subscriptionsToPush.push(vscode.commands.registerCommand(CommandsEnum.RELOAD, () => {
+			genericTools.reloadWindow();
+		}));
+
 		// Insert install command
 		subscriptionsToPush.push(vscode.commands.registerCommand(CommandsEnum.INSTALL, () => {
 			extensionsProfileManager.installAllExtension();

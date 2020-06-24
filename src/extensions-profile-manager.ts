@@ -66,7 +66,7 @@ export class ExtensionsProfileManager {
                 this.genericTools.installExtensions(extensionName);
             }
         });
-        this.genericTools.reloadWindow();
+        this.genericTools.showInformationMessage(MessagesEnum.RELOAD_WINDOW);
     }
 
     uninstallAllExtension() {
@@ -89,7 +89,7 @@ export class ExtensionsProfileManager {
                 if (vscode.extensions.getExtension(extensionName)) this.genericTools.uninstallExtensions(extensionName);
             }                
         });
-        this.genericTools.reloadWindow();
+        this.genericTools.showInformationMessage(MessagesEnum.RELOAD_WINDOW);
     }
 
     /*******************************************************
