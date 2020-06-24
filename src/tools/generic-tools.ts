@@ -97,7 +97,6 @@ export class GenericTools {
         let data = "",
             command = this.getCommand(true);
         this.printOnOutputChannel(MessagesEnum.INSTALL_EXTENSION.replace('{0}', extension));
-        this.sleep(ContantsData.SLEEP_TIME);
 
         if (command) {
             command.arguments = command.arguments.replace('{0}', extension);
@@ -117,7 +116,6 @@ export class GenericTools {
         let data = "",
             command = this.getCommand(false);
         this.printOnOutputChannel(MessagesEnum.UNINSTALL_EXTENSION.replace('{0}', extension));
-        this.sleep(ContantsData.SLEEP_TIME);
 
         if (command) {
             command.arguments = command.arguments.replace('{0}', extension);

@@ -47,7 +47,10 @@
 				"extensionsmanager.plataform": {
 					"type": "string",
 					"default": "Windows",
-					"enum": ["Windows", "Linux"],
+					"enum": [
+						"Windows",
+						"Linux"
+					],
 					"description": "Platform necessary to choose command to use on install or uninstall extensions"
 				}
 			}

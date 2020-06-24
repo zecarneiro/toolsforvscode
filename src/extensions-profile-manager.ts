@@ -76,7 +76,6 @@ export class ExtensionsProfileManager {
                 const extensionName = value[extensionId];
                 if (extensionName !== Keys.OWN_EXTENSION) {
                     if (this.getValueStorage(extensionName)) this.enableExtensions([extensionName]);
-                    this.genericTools.sleep(ContantsData.SLEEP_TIME);
                     if (vscode.extensions.getExtension(extensionName)) this.genericTools.uninstallExtensions(extensionName);
                 }
             }
@@ -87,7 +86,6 @@ export class ExtensionsProfileManager {
             const extensionName = value;
             if (extensionName !== Keys.OWN_EXTENSION) {
                 if (this.getValueStorage(extensionName)) this.enableExtensions([extensionName]);
-                this.genericTools.sleep(ContantsData.SLEEP_TIME);
                 if (vscode.extensions.getExtension(extensionName)) this.genericTools.uninstallExtensions(extensionName);
             }                
         });
@@ -112,7 +110,6 @@ export class ExtensionsProfileManager {
     private enableExtensions(extensionsData: string[]) {
         extensionsData.forEach(value => {
             this.genericTools.printOnOutputChannel(MessagesEnum.ENABLE_EXTENSION.replace('{0}', value));
-            this.genericTools.sleep(ContantsData.SLEEP_TIME);
             let extensionData = vscode.extensions.getExtension(value);
             if (!extensionData) {
                 let storageValue = this.getValueStorage(value);
@@ -138,7 +135,6 @@ export class ExtensionsProfileManager {
     private disableExtensions(extensionsData: string[]) {
         extensionsData.forEach(value => {
             this.genericTools.printOnOutputChannel(MessagesEnum.DISABLE_EXTENSION.replace('{0}', value));
-            this.genericTools.sleep(ContantsData.SLEEP_TIME);
             let storageValue = this.getValueStorage(value);
             if (!storageValue) {
                 let extensionData = vscode.extensions.getExtension(value);
