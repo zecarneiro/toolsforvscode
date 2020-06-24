@@ -6,4 +6,5 @@ export enum MessagesEnum {
     UNINSTALL_EXTENSION = "Uninstall {0}...",
     INIT_GET_CONFIG_UPDATED = 'Get Updated Configuration: Init',
     END_GET_CONFIG_UPDATED = 'Get Updated Configuration: Done',
+    RELOAD_WINDOW = 'Please reload vscode window'
 }

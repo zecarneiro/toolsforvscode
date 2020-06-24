@@ -1,23 +1,32 @@
-import { CommandsEnum } from './../enums/commands-enum';
-import { CommandInfoInterface } from './../interfaces/command-info-interface';
-import { MessagesEnum } from './../enums/messages-enum';
-import { ContantsData } from './../constants-data';
 import * as vscode from 'vscode';
 import * as shelljs from 'shelljs';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as child_process from 'child_process';
-import * as os from 'os';
+import { CommandsEnum } from './../enums/commands-enum';
+import { CommandInfoInterface } from './../interfaces/command-info-interface';
+import { MessagesEnum } from './../enums/messages-enum';
+import { ContantsData } from './../constants-data';
 import { Keys } from '../enums/keys-enum';
 
 export class GenericTools {
-    constructor() {}
+    private messageToPopup: string;
+    constructor() {
+        this.messageToPopup = ContantsData.TITLE_APP + ": {0}";
+    }
 
+    /*******************************************************
+     * Public Area
+     ******************************************************/
     sleep(ms: number) {
         let start = new Date().getTime()
         let expire = start + ms;
         while (new Date().getTime() < expire) { }
         return;
+    }
+
+    reloadWindow() {
+        vscode.commands.executeCommand('workbench.action.reloadWindow');
     }
 
     processShellJsError(printstdout = false): boolean {
@@ -32,19 +41,25 @@ export class GenericTools {
         return path.join(wordInit, wordEnd);
     }
 
+    showInformationMessage(message: string) {
+        vscode.window.showInformationMessage(this.messageToPopup.replace('{0}', message));
+    }
+
     printOnOutputChannel(message: string, isNewLine = true) {
-        ContantsData.OUTPUT_CHANNEL.show();
         if (isNewLine) {
             const todayNow = new Date();
             let dateFormated = todayNow.getFullYear() + "-" + todayNow.getMonth() + "-" + todayNow.getDay() + " ";
             dateFormated += todayNow.getHours() + ":" + todayNow.getMinutes() + ":" + todayNow.getSeconds() + "." + todayNow.getMilliseconds();
             
             message = "\[" + dateFormated + "\] " + message;
+
             ContantsData.OUTPUT_CHANNEL.appendLine("");
             ContantsData.OUTPUT_CHANNEL.append(message);
+            ContantsData.OUTPUT_CHANNEL.show(true);
         }
         else {
             ContantsData.OUTPUT_CHANNEL.append(" " + message);
+            ContantsData.OUTPUT_CHANNEL.show(true);
         }
     }
 
@@ -118,6 +133,9 @@ export class GenericTools {
         this.printOnOutputChannel(data, false);
     }
 
+    /*******************************************************
+     * Private Area
+     ******************************************************/
     private executeCommand(commandInfo: CommandInfoInterface): child_process.SpawnSyncReturns<any> {
         const response = child_process.spawnSync(commandInfo.executable, [commandInfo.arguments], {shell: true});
         return response;

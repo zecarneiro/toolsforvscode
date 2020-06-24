@@ -2,7 +2,6 @@ export enum Keys {
     // Keys for config of vscode settings
     APP_CONFIG = 'extensionsmanager',
     JSON_FILE_CONFIG = 'jsonFile',
-    MULTIPLE_PROFILE_CONFIG = 'multiple-profile',
     PLATFORM_CONFIG = 'plataform',
     PLATFORM_CONFIG_WIN = "Windows",
     PLATFORM_CONFIG_LINUX = "Linux",
@@ -13,7 +12,6 @@ export enum Keys {
 
     // Keys for STORAGE
     STORAGE_ACTIVATED_PROFILES = 'activeProfiles',
-    STORAGE_EXTENSION_ON_PROCESS = 'extensionOnProcess',
 
     // Keys for new names of package json files of extensions when disabled or enabled
     DISABLED_PACKAGEJSON = 'package.json_EXT_DISABLED',

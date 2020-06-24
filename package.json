@@ -4,8 +4,8 @@
 	},
 	"publisher": "josecnoronha",
 	"name": "extensionsmanager",
-	"displayName": "extensionsManager",
-	"description": "Extensions Manager",
+	"displayName": "Extensions Manager",
+	"description": "Enable, Disable, Install and Uninstall Extensions From JSON File",
 	"version": "0.0.2",
 	"engines": {
 		"vscode": "^1.46.0"
@@ -43,11 +43,6 @@
 					"type": "string",
 					"default": null,
 					"description": "Path of json file. Format: JSON Data: { ignored: ['ext1', ...], profiles: {name1: ['ext1', ...], ...}"
-				},
-				"extensionsmanager.multiple-profile": {
-					"type": "boolean",
-					"default": false,
-					"description": "Can activate multiple profile"
 				},
 				"extensionsmanager.plataform": {
 					"type": "string",
