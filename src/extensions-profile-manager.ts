@@ -1,3 +1,5 @@
+import { ProfileTypeObjetInterface } from './interfaces/profile-type-object-interface';
+import { JsonDataInterface } from './interfaces/json-data-interface';
 import * as vscode from 'vscode';
 import { DirectoryOrFileInfoInterface } from './interfaces/directory-or-file-info-interface';
 import { Keys } from './enums/keys-enum';
@@ -9,9 +11,7 @@ import { ContantsData } from './constants-data';
 
 export class ExtensionsProfileManager {
     // Objects
-    private jsonData: Object | undefined;
-    private noProfileData: string[] = [];
-    private profileData: Object = {};
+    private dataFromFile: JsonDataInterface;
 
     // Tools
     private genericTools: GenericTools = new GenericTools();
@@ -21,6 +21,7 @@ export class ExtensionsProfileManager {
     private configData: any;
 
     constructor(private contextExtension: vscode.ExtensionContext) {
+        this.dataFromFile = {ignored: [], profiles: []};
         this.item = [];
         this.getUpdatedConfig();
         this.setMenu();
@@ -31,33 +32,45 @@ export class ExtensionsProfileManager {
      ******************************************************/
     getUpdatedConfig() {
         this.configData = vscode.workspace.getConfiguration(Keys.APP_CONFIG);
-        this.jsonData = this.configData[Keys.JSON_FILE_CONFIG]
-            ? JSON.parse(this.genericTools.readFile(this.configData[Keys.JSON_FILE_CONFIG]))
-            : {};
+        let dataFile = this.genericTools.readFile(this.configData[Keys.JSON_FILE_CONFIG]);
         
-        this.profileData = {};
-        this.noProfileData = [];
+        if (dataFile["ignored"] && dataFile["ignored"] instanceof Array) {
+            for (const key in dataFile["ignored"]) {
+                if (typeof dataFile["ignored"][key] === "string") {
+                    this.dataFromFile.ignored.push(dataFile["ignored"][key]);
+                }
+            }
+            this.dataFromFile.ignored = this.genericTools.removeDuplicatesValues(this.dataFromFile.ignored);
+        }
+
+        if (dataFile["profiles"] && dataFile["profiles"] instanceof Array) {
+            for (const key in dataFile["profiles"]) {
+                if (typeof dataFile["profiles"][key] == "object") {
+                    let data = dataFile["profiles"][key] as ProfileTypeObjetInterface;
+
+                    if (
+                        data.name && data.data
+                        && data.data instanceof Array
+                        && data.data.length > 0
+                        && !data.data.find(value => typeof value !== 'string')
+                    ) {
+                        this.dataFromFile.profiles.push(dataFile["profiles"][key]);
+                    }
+                }
+            }
+            this.dataFromFile.profiles = this.genericTools.removeDuplicatesValues(this.dataFromFile.profiles);
+        }
+
         this.createMenuObject();
         this.validateAllProfiles();
     }
 
+    /*******************************************************
+     * Install/Uninstall Area
+     ******************************************************/
     installAllExtension() {
-        //Profiles
-        Object.entries(this.profileData).forEach(([key, value]) => {
-            for (let extensionId in value) {
-                const extensionName = value[extensionId];
-                if (
-                    extensionName !== Keys.OWN_EXTENSION
-                    && !vscode.extensions.getExtension(extensionName)
-                    && !this.getValueStorage(extensionName)
-                )
-                    this.genericTools.installExtensions(extensionName);
-            }
-        });
-
         // No profiles
-        this.noProfileData.forEach(value => {
-            const extensionName = value;
+        this.dataFromFile.ignored.forEach(extensionName => {
             if (
                 extensionName !== Keys.OWN_EXTENSION
                 && !vscode.extensions.getExtension(extensionName)
@@ -66,34 +79,82 @@ export class ExtensionsProfileManager {
                 this.genericTools.installExtensions(extensionName);
             }
         });
+
+        //Profiles
+        this.dataFromFile.profiles.forEach(profile => {
+            profile.data.forEach(extensionName => {
+                if (
+                    extensionName !== Keys.OWN_EXTENSION
+                    && !vscode.extensions.getExtension(extensionName)
+                    && !this.getValueStorage(extensionName)
+                ) {
+                    this.genericTools.installExtensions(extensionName);
+                }
+            });
+        });
         this.genericTools.showInformationMessage(MessagesEnum.RELOAD_WINDOW);
     }
 
     uninstallAllExtension() {
+        let extensionsData = {
+            toEnable: [] as string[],
+            toUninstall: [] as string[]
+        };        
+
         //Profiles
-        Object.entries(this.profileData).forEach(([key, value]) => {
-            for (let extensionId in value) {
-                const extensionName = value[extensionId];
+        this.dataFromFile.profiles.forEach(value => {
+            value.data.forEach(extensionName => {
                 if (extensionName !== Keys.OWN_EXTENSION) {
-                    if (this.getValueStorage(extensionName)) this.enableExtensions([extensionName]);
-                    if (vscode.extensions.getExtension(extensionName)) this.genericTools.uninstallExtensions(extensionName);
+                    if (this.getValueStorage(extensionName)) {
+                        if (!extensionsData.toEnable.includes(extensionName)) {
+                            extensionsData.toEnable.push(extensionName);
+                        }
+                    } else {
+                        if (
+                            extensionsData.toEnable.length == 0
+                            && vscode.extensions.getExtension(extensionName)
+                            && !extensionsData.toUninstall.includes(extensionName)
+                        ) {
+                            extensionsData.toUninstall.push(extensionName);
+                        }
+                    }
+                }
+            });
+        });
+
+        // No profiles
+        this.dataFromFile.ignored.forEach(extensionName => {
+            if (extensionName !== Keys.OWN_EXTENSION) {
+                if (this.getValueStorage(extensionName)) {
+                    if (!extensionsData.toEnable.includes(extensionName)) {
+                        extensionsData.toEnable.push(extensionName);
+                    }
+                } else {
+                    if (
+                        extensionsData.toEnable.length == 0
+                        && vscode.extensions.getExtension(extensionName)
+                        && !extensionsData.toUninstall.includes(extensionName)
+                    ) {
+                        extensionsData.toUninstall.push(extensionName);
+                    }
                 }
             }
         });
 
-        // No profiles
-        this.noProfileData.forEach(value => {
-            const extensionName = value;
-            if (extensionName !== Keys.OWN_EXTENSION) {
-                if (this.getValueStorage(extensionName)) this.enableExtensions([extensionName]);
-                if (vscode.extensions.getExtension(extensionName)) this.genericTools.uninstallExtensions(extensionName);
-            }                
-        });
-        this.genericTools.showInformationMessage(MessagesEnum.RELOAD_WINDOW);
+        if (extensionsData.toEnable.length > 0) {
+            this.enableExtensions(extensionsData.toEnable);
+            let message = MessagesEnum.RELOAD_WINDOW + " and Run Unistall again";
+            this.genericTools.showInformationMessage(message);
+        } else {
+            extensionsData.toUninstall.forEach(extensionName => {
+                this.genericTools.uninstallExtensions(extensionName);
+            });
+            this.genericTools.showInformationMessage(MessagesEnum.RELOAD_WINDOW);
+        }
     }
 
     /*******************************************************
-     * Private Area
+     * Storage Area
      ******************************************************/
     private getValueStorage(key: string): StorageExtensionInfoInterface | undefined {
         return this.contextExtension.globalState.get(key) as StorageExtensionInfoInterface;
@@ -107,12 +168,17 @@ export class ExtensionsProfileManager {
         this.contextExtension.globalState.update(key, storage);
     }
 
+    /*******************************************************
+     * Disable/Enable Extensions Area
+     ******************************************************/
     private enableExtensions(extensionsData: string[]) {
         extensionsData.forEach(value => {
-            this.genericTools.printOnOutputChannel(MessagesEnum.ENABLE_EXTENSION.replace('{0}', value));
             let extensionData = vscode.extensions.getExtension(value);
+            let storageValue = this.getValueStorage(value);
+            let updateStorage = false;
+
+            this.genericTools.printOnOutputChannel(MessagesEnum.ENABLE_EXTENSION.replace('{0}', value));
             if (!extensionData) {
-                let storageValue = this.getValueStorage(value);
                 if (!storageValue) {
                     this.genericTools.printOnOutputChannel(MessagesEnum.ENABLE_DISABLE_IVALID.replace('{0}', value), false);
                 } else {
@@ -123,12 +189,16 @@ export class ExtensionsProfileManager {
                         destPath: storageValue.installed
                     };
                     if (this.genericTools.renameFilesOrDir(data.name, data.newName as string, false, data.path, data.destPath)) {
-                        this.deleteKeyStorage(value);
+                        updateStorage = true;
                     } else {
                         this.genericTools.printOnOutputChannel(MessagesEnum.ENABLE_DISABLE_IVALID.replace('{0}', value), false);
                     }
                 }
+            } else {
+                if (storageValue) updateStorage = true;
             }
+
+            if (updateStorage) this.deleteKeyStorage(value);
         });
     }
 
@@ -159,27 +229,27 @@ export class ExtensionsProfileManager {
 
     private process(item: vscode.QuickPickItem | vscode.QuickPickItem[] | undefined) {
         let extensionObject = {
-            'toEnable': [] as string[],
-            'toDisable': [] as string[]
+            toEnable: [] as string[],
+            toDisable: [] as string[]
         }
 
-        Object.entries(this.profileData).forEach(([key, value]) => {
+        this.dataFromFile.profiles.forEach(value => {
             let toDisabled: boolean;
             if (item instanceof Array) {
-                toDisabled = !item.find(item => item.label == key);
+                toDisabled = !item.find(item => item.label == value.name);
             } else {
-                toDisabled = item?.label !== key;
+                toDisabled = item?.label !== value.name;
             }
 
-            for (let extensionId in value) {
-                if (value[extensionId] !== Keys.OWN_EXTENSION) {
-                    if (toDisabled) {
-                        extensionObject.toDisable.push(value[extensionId]);
-                    } else {
-                        extensionObject.toEnable.push(value[extensionId]);
+            value.data.forEach(extensionName => {
+                if (extensionName !== Keys.OWN_EXTENSION) {
+                    if (toDisabled && extensionObject.toDisable.indexOf(extensionName) < 0) {
+                        extensionObject.toDisable.push(extensionName);
+                    } else if (!toDisabled && extensionObject.toEnable.indexOf(extensionName) < 0) {
+                        extensionObject.toEnable.push(extensionName);
                     }
                 }
-            }
+            });
         });
 
         // Enable Extension
@@ -188,7 +258,21 @@ export class ExtensionsProfileManager {
         // Disable Extension
         this.disableExtensions(extensionObject.toDisable);
 
+        // Update profiles on storage
+        this.validateAllProfiles();
+
         this.genericTools.showInformationMessage(MessagesEnum.RELOAD_WINDOW);
+    }
+
+    /*******************************************************
+     * Menu Area
+     ******************************************************/
+    private createMenuObject() {
+        this.dataFromFile.profiles.forEach(value => {
+            if (this.item.indexOf(value.name) < 0) {
+                this.item.push(value.name);
+            }
+        });
     }
 
     private setMenu() {
@@ -218,28 +302,15 @@ export class ExtensionsProfileManager {
         this.contextExtension.subscriptions.push(menuProfiles);
     }
 
-    private createMenuObject() {
-        if (this.jsonData) {
-            Object.entries(this.jsonData).forEach(([key, value]) => {
-                if (key === Keys.NO_PROFILE) this.noProfileData = value;
-                else if (key === Keys.PROFILE) this.profileData = value;
-            });
-
-            this.item = [];
-            for (let profile in this.profileData) {
-                this.item.push(profile);
-            }
-        }
-    }
-
     private validateAllProfiles() {
         let activeProfile: string[] = [];
-        Object.entries(this.profileData).forEach(([key, value]) => {
-            for (let extensionId in value) {
-                let extensionName = value[extensionId];
+        this.dataFromFile.profiles.forEach(value => {
+            for (const extensionName of value.data) {
                 if (vscode.extensions.getExtension(extensionName)) {
-                    activeProfile.push(key);
-                    break;
+                    if (activeProfile.indexOf(value.name) < 0) {
+                        activeProfile.push(value.name);
+                        break;
+                    }
                 }
             }
         });

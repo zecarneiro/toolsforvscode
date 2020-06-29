@@ -20,10 +20,6 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "extensionsmanager.reload",
-				"title": "Extensions Manager Profile: Reload"
-			},
-			{
 				"command": "extensionsmanager.install",
 				"title": "Extensions Manager Profile: Install"
 			},

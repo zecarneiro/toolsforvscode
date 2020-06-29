@@ -6,10 +6,6 @@ export enum Keys {
     PLATFORM_CONFIG_WIN = "Windows",
     PLATFORM_CONFIG_LINUX = "Linux",
 
-    // Keys of JSON File
-    NO_PROFILE = 'ignored',
-    PROFILE = 'profiles',
-
     // Keys for STORAGE
     STORAGE_ACTIVATED_PROFILES = 'activeProfiles',
 

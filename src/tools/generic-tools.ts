@@ -18,15 +18,31 @@ export class GenericTools {
     /*******************************************************
      * Public Area
      ******************************************************/
+    removeDuplicatesValues(array: Array<any>): Array<any> {
+        if (array instanceof Array) {
+            let newArray: any[] = [];
+            array.forEach(value => {
+                let exist = false;
+                for (const key in newArray) {
+                    if (JSON.stringify(newArray[key]) === JSON.stringify(value)) {
+                        exist = true;
+                        break;
+                    }
+                }
+                if (!exist) {
+                    newArray.push(value);
+                }
+            });
+            return newArray;
+        }
+        return array;
+    }
+
     sleep(ms: number) {
         let start = new Date().getTime()
         let expire = start + ms;
         while (new Date().getTime() < expire) { }
         return;
-    }
-
-    reloadWindow() {
-        vscode.commands.executeCommand('workbench.action.reloadWindow');
     }
 
     processShellJsError(printstdout = false): boolean {
@@ -72,13 +88,16 @@ export class GenericTools {
         }
     }
 
-    readFile(file: string, directory?: string) {
+    readFile(file: string, directory?: string, toJson = true): any | string {
         let data: any | string;
         file = directory ? this.joinWordForValidPath(directory, file) : file;
         if (shelljs.test('-f', file)) {
-            data = shelljs.cat(file);
-            if (!this.processShellJsError()) data = undefined;
-            else data = data.stdout;
+            data = shelljs.cat(file)?.stdout;
+            if (!this.processShellJsError()) {
+                data = undefined;
+            } else if (toJson) {
+                data = JSON.parse(data);
+            }
         }
         return data;
     }
