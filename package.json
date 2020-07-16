@@ -3,10 +3,10 @@
 		"name": "José C. Noronha"
 	},
 	"publisher": "josecnoronha",
-	"name": "extensionsmanager",
-	"displayName": "Extensions Manager",
-	"description": "Enable, Disable, Install and Uninstall Extensions From JSON File",
-	"version": "0.0.2",
+	"name": "toolsforvscode",
+	"displayName": "Tools For VSCODE",
+	"description": "Collapse, Expand, Reloand and Enable, Disable, Install and Uninstall Extensions From JSON File",
+	"version": "1.0.0",
 	"engines": {
 		"vscode": "^1.46.0"
 	},
@@ -20,31 +20,31 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "extensionsmanager.install",
+				"command": "toolsforvscode.extensionsmanagerinstall",
 				"title": "Extensions Manager Profile: Install"
 			},
 			{
-				"command": "extensionsmanager.uninstall",
+				"command": "toolsforvscode.extensionsmanageruninstall",
 				"title": "Extensions Manager Profile: Uninstall"
 			},
 			{
-				"command": "extensionsmanager.menu",
+				"command": "toolsforvscode.extensionsmanagermenu",
 				"title": "Extensions Manager Profile: Menu"
 			},
 			{
-				"command": "extensionsmanager.updatedconfig",
+				"command": "toolsforvscode.extensionsmanagerupdatedconfig",
 				"title": "Extensions Manager Profile: Get Updated Config"
 			}
 		],
 		"configuration": {
-			"title": "Extensions Manager Profile",
+			"title": "Tools For VSCODE",
 			"properties": {
-				"extensionsmanager.jsonFile": {
+				"toolsforvscode.jsonFile": {
 					"type": "string",
 					"default": null,
 					"description": "Path of json file. Format: JSON Data: { ignored: ['ext1', ...], profiles: {name1: ['ext1', ...], ...}"
 				},
-				"extensionsmanager.plataform": {
+				"toolsforvscode.plataform": {
 					"type": "string",
 					"default": "Windows",
 					"enum": [
@@ -52,6 +52,21 @@
 						"Linux"
 					],
 					"description": "Platform necessary to choose command to use on install or uninstall extensions"
+				},
+				"toolsforvscode.showReload": {
+					"type": "boolean",
+					"default": "true",
+					"description": "Show/Hide Button Reload Window"
+				},
+				"toolsforvscode.showExpandCollapse": {
+					"type": "boolean",
+					"default": "true",
+					"description": "Show/Hide Button(s) to Expand/Collapse Regions and Subregions"
+				},
+				"toolsforvscode.showExtensionsManager": {
+					"type": "boolean",
+					"default": "true",
+					"description": "Show/Hide Button(s) to Extensions Manager"
 				}
 			}
 		}

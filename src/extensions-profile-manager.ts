@@ -7,7 +7,6 @@ import { CommandsEnum } from './enums/commands-enum';
 import { MessagesEnum } from './enums/messages-enum';
 import { GenericTools } from './tools/generic-tools';
 import { StorageExtensionInfoInterface } from './interfaces/storage-extension-info-interface';
-import { ContantsData } from './constants-data';
 
 export class ExtensionsProfileManager {
     // Objects

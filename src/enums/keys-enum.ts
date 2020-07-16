@@ -1,6 +1,9 @@
 export enum Keys {
     // Keys for config of vscode settings
-    APP_CONFIG = 'extensionsmanager',
+    APP_CONFIG = 'toolsforvscode',
+    SHOW_RELOAD_CONFIG = 'showReload',
+    SHOW_EXPAND_COLLAPSE_CONFIG = 'showExpandCollapse',
+    SHOW_EXTENSIONS_MANAGER_CONFIG = 'showExtensionsManager',
     JSON_FILE_CONFIG = 'jsonFile',
     PLATFORM_CONFIG = 'plataform',
     PLATFORM_CONFIG_WIN = "Windows",
