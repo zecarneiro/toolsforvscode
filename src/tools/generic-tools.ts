@@ -181,7 +181,11 @@ export class GenericTools {
                     arguments: "-command \"" + vscodeCMD + "\""
                 };
                 break;
-            case Keys.PLATFORM_CONFIG_LINUX: //TODO: Create to Linux Platform
+            case Keys.PLATFORM_CONFIG_LINUX:
+                commandInfo = {
+                    executable: 'bash',
+                    arguments: "-c \"" + vscodeCMD + "\""
+                };
                 break;
             default:
                 break;
