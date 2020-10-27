@@ -18,8 +18,7 @@
 		"chrmarti.regex",
 		"liximomo.sftp",
 		"tombonnike.vscode-status-bar-format-toggle",
-		"wayou.vscode-todo-highlight",
-		"ms-vscode.cpptools-themes"
+		"wayou.vscode-todo-highlight"
 	],
 	"profiles": [
 		{
@@ -110,7 +109,6 @@
 			"data": [
 				"steoates.autoimport",
 				"ms-vscode.vscode-typescript-tslint-plugin",
-				"kisstkondoros.typelens",
 				"xabikos.JavaScriptSnippets",
 				"christian-kohler.npm-intellisense"
 			]
