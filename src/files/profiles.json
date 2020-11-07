@@ -110,14 +110,21 @@
 				"steoates.autoimport",
 				"ms-vscode.vscode-typescript-tslint-plugin",
 				"xabikos.JavaScriptSnippets",
-				"christian-kohler.npm-intellisense"
+				"christian-kohler.npm-intellisense",
+				"dbaeumer.vscode-eslint"
 			]
 		},
 		{
-			"name": "Shell",
+			"name": "Bash",
 			"data": [
 				"remisa.shellman",
 				"foxundermoon.shell-format"
+			]
+		},
+		{
+			"name": "Power Shell",
+			"data": [
+				"ms-vscode.powershell"
 			]
 		},
 		{
