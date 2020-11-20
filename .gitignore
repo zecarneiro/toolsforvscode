@@ -1,5 +1,8 @@
-out
-node_modules
-.vscode-test/
+/out/*
+/node_modules/*
+/.vscode/*
 *.vsix
-.vscode/
+
+!/.vscode/launch.json
+!/.vscode/settings.json
+!/.vscode/tasks.json
