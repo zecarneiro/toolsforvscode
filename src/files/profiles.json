@@ -1,25 +1,4 @@
 {
-	"ignored": [
-		"gruntfuggly.todo-tree",
-		"formulahendry.terminal",
-		"vscode-icons-team.vscode-icons",
-		"CoenraadS.bracket-pair-colorizer",
-		"christian-kohler.path-intellisense",
-		"alefragnani.project-manager",
-		"ms-vscode-remote.remote-wsl",
-		"ms-vsliveshare.vsliveshare",
-		"alefragnani.Bookmarks",
-		"SirTori.indenticator",
-		"kevinkyang.auto-comment-blocks",
-		"aaron-bond.better-comments",
-		"nobuhito.printcode",
-		"VisualStudioExptTeam.vscodeintellicode",
-		"naumovs.color-highlight",
-		"chrmarti.regex",
-		"liximomo.sftp",
-		"tombonnike.vscode-status-bar-format-toggle",
-		"wayou.vscode-todo-highlight"
-	],
 	"profiles": [
 		{
 			"name": "Git",
@@ -163,6 +142,30 @@
 			"name": "C#",
 			"data": [
 				"ms-dotnettools.csharp"
+			]
+		},
+		{
+			"name": "Others",
+			"data": [
+				"gruntfuggly.todo-tree",
+				"formulahendry.terminal",
+				"vscode-icons-team.vscode-icons",
+				"CoenraadS.bracket-pair-colorizer",
+				"christian-kohler.path-intellisense",
+				"alefragnani.project-manager",
+				"ms-vscode-remote.remote-wsl",
+				"ms-vsliveshare.vsliveshare",
+				"alefragnani.Bookmarks",
+				"SirTori.indenticator",
+				"kevinkyang.auto-comment-blocks",
+				"aaron-bond.better-comments",
+				"nobuhito.printcode",
+				"VisualStudioExptTeam.vscodeintellicode",
+				"naumovs.color-highlight",
+				"chrmarti.regex",
+				"liximomo.sftp",
+				"tombonnike.vscode-status-bar-format-toggle",
+				"wayou.vscode-todo-highlight"
 			]
 		}
 	]

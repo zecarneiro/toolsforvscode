@@ -4,9 +4,9 @@
 	},
 	"publisher": "josecnoronha",
 	"name": "toolsforvscode",
-	"displayName": "Tools For VSCODE",
-	"description": "Collapse, Expand, Reloand and Enable, Disable, Install and Uninstall Extensions From JSON File",
-	"version": "1.0.0",
+	"displayName": "Tools for VSCode",
+	"description": "Collapse, Expand, Reload and Enable, Disable, Install and Uninstall Extensions",
+	"version": "2.0.0",
 	"engines": {
 		"vscode": "^1.46.0"
 	},
@@ -20,53 +20,26 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "toolsforvscode.extensionsmanagerinstall",
-				"title": "Extensions Manager Profile: Install"
+				"command": "toolsforvscode.profilesmanager",
+				"title": "Extensions Manager Profile: Show Profiles"
 			},
 			{
-				"command": "toolsforvscode.extensionsmanageruninstall",
-				"title": "Extensions Manager Profile: Uninstall"
+				"command": "toolsforvscode.extensionsinstall",
+				"title": "Extensions Manager Profile: Install all extensions in profile data settings"
 			},
 			{
-				"command": "toolsforvscode.extensionsmanagermenu",
-				"title": "Extensions Manager Profile: Menu"
-			},
-			{
-				"command": "toolsforvscode.extensionsmanagerupdatedconfig",
-				"title": "Extensions Manager Profile: Get Updated Config"
+				"command": "toolsforvscode.extensionsuninstall",
+				"title": "Extensions Manager Profile: Uninstall all extensions in profile data settings"
 			}
 		],
 		"configuration": {
-			"title": "Tools For VSCODE",
+			"title": "Tools for VSCode",
 			"properties": {
-				"toolsforvscode.jsonFile": {
-					"type": "string",
-					"default": null,
-					"description": "Path of json file. Format: JSON Data: { ignored: ['ext1', ...], profiles: {name1: ['ext1', ...], ...}"
-				},
-				"toolsforvscode.plataform": {
-					"type": "string",
-					"default": "Windows",
-					"enum": [
-						"Windows",
-						"Linux"
-					],
-					"description": "Platform necessary to choose command to use on install or uninstall extensions"
-				},
-				"toolsforvscode.showReload": {
-					"type": "boolean",
-					"default": "true",
-					"description": "Show/Hide Button Reload Window"
-				},
-				"toolsforvscode.showExpandCollapse": {
-					"type": "boolean",
-					"default": "true",
-					"description": "Show/Hide Button(s) to Expand/Collapse Regions and Subregions"
-				},
-				"toolsforvscode.showExtensionsManager": {
-					"type": "boolean",
-					"default": "true",
-					"description": "Show/Hide Button(s) to Extensions Manager"
+				"toolsforvscode.profiles": {
+					"title": "Profiles",
+					"type": "array",
+					"default": [],
+					"description": "Format: [{name: 'exemple', data: ['ext1', ...]}, ...]"
 				}
 			}
 		}
@@ -94,6 +67,9 @@
 	},
 	"dependencies": {
 		"@types/shelljs": "^0.8.8",
-		"shelljs": "^0.8.4"
+		"@types/sqlite3": "^3.1.6",
+		"shelljs": "^0.8.4",
+		"sqlite": "^4.0.17",
+		"sqlite3": "^5.0.0"
 	}
 }

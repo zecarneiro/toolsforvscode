@@ -2,6 +2,7 @@
 /node_modules/*
 /.vscode/*
 *.vsix
+/test/*
 
 !/.vscode/launch.json
 !/.vscode/settings.json
