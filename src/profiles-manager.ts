@@ -120,6 +120,8 @@ export class ProfilesManager {
                         }
                     }).catch(error => GenericFunctions.showMessage(error, MessageType.ERROR));
                 }
+            } else {
+                GenericFunctions.showMessage(conn.message, MessageType.ERROR);
             }
         });
     }
@@ -174,6 +176,8 @@ export class ProfilesManager {
                         }
                     });
                 });
+            } else {
+                GenericFunctions.showMessage(conn.message, MessageType.ERROR);
             }
         });
     }

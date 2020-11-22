@@ -5,7 +5,7 @@ import { Settings } from '../settings';
 import * as vscode from 'vscode';
 import { StringsReplace } from '../interface/strings-replace';
 import { execSync } from 'child_process';
-import { Terminal } from './terminal';
+import { existsSync } from 'fs';
 
 export class GenericFunctions {
 
@@ -145,5 +145,18 @@ export class GenericFunctions {
         } else {
             return JSON.stringify(data);
         }
+    }
+
+    static fileExist(file: string): boolean {
+        let exist: boolean = false;
+        try {
+            file = GenericFunctions.resolvePath(file);
+            if (existsSync(file)) {
+                exist = true;
+            }
+        } catch(err) {
+            GenericFunctions.showMessage(err, MessageType.ERROR);
+        }
+        return exist;
     }
 }

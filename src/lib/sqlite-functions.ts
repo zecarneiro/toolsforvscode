@@ -19,21 +19,25 @@ export class SqliteFunctions {
         } as Response<SqliteResponse>;
 
         if (file && file.length > 0) {
-            file = GenericFunctions.resolvePath(file);
-            if (this.dbConn && file !== this.dbConn.file) {
-                this.endConnection();
-            }
+            if (GenericFunctions.fileExist(file)) {
+                file = GenericFunctions.resolvePath(file);
+                if (this.dbConn && file !== this.dbConn.file) {
+                    this.endConnection();
+                }
 
-            if (!this.dbConn) {
-                this.dbConn = {
-                    file: file,
-                    database: await open({
-                        filename: file,
-                        driver: sqlite3.Database
-                    })
-                };
+                if (!this.dbConn) {
+                    this.dbConn = {
+                        file: file,
+                        database: await open({
+                            filename: file,
+                            driver: sqlite3.Database
+                        })
+                    };
+                }
+                response.data = this.dbConn;
+            } else {
+                response.message = 'Invalid DB: ' + file;
             }
-            response.data = this.dbConn;
         }
         response.status = response.data ? true : false;
         return response;
