@@ -2,6 +2,7 @@ import { GenericFunctions } from './generic-functions';
 import { Response } from '../interface/response';
 import * as sqlite3 from 'sqlite3';
 import { Database, open } from 'sqlite';
+import { Messages } from '../enum/messages';
 
 export interface SqliteResponse {
     file: string;
@@ -36,7 +37,7 @@ export class SqliteFunctions {
                 }
                 response.data = this.dbConn;
             } else {
-                response.message = 'Invalid DB: ' + file;
+                response.message = GenericFunctions.replaceAll(Messages.INVALID_SQLITE_DB_FILE, [{search: '{0}', toReplace: file}]);
             }
         }
         response.status = response.data ? true : false;

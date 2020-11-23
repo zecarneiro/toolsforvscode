@@ -11,6 +11,7 @@ import { Terminal } from './lib/terminal';
 import { PlatformType } from './enum/platform-type';
 import * as os from 'os';
 import { MessageType } from './enum/message-type';
+import { Messages } from './enum/messages';
 
 export class ProfilesManager {
     private profilesData: Profiles[];
@@ -37,13 +38,13 @@ export class ProfilesManager {
                 if (this.profilesData.length <= 0) {
                     toIsert = true;
                 } else if (this.profilesData.findIndex(value => value.name === profile.name) !== -1) {
-                    const msg = "Already exists profile with name: " + profile.name;
+                    const msg = GenericFunctions.replaceAll(Messages.PROFILE_EXISTS, [{search: '{0}', toReplace: profile.name}]);
                     toIsert = false;
                     GenericFunctions.printToOutputChannel(msg, true);
                 } else {
                     for (const key in profile.data) {
                         if (this.profilesData.findIndex(x => x.data.indexOf(profile.data[key]) >= 0) !== -1) {
-                            const msg = "Already exists extension id: " + profile.data[key];
+                            const msg = GenericFunctions.replaceAll(Messages.PROFILE_EXISTS, [{search: '{0}', toReplace: profile.data[key]}]);
                             toIsert = false;
                             GenericFunctions.printToOutputChannel(msg, true);
                             break;
@@ -88,15 +89,11 @@ export class ProfilesManager {
         this.sqliteDB.open(this.getStateStorageFile()).then(conn => {
             if (conn.status) {
                 let db = conn.data.database;
-                const message = {
-                    success: 'All ;extensions disabled. Please Reload!!!',
-                    error: 'Manage Profile Operations Fail'
-                };
 
                 // Enable All Extensions
                 if (toDisable.length === 0) {
                     db.exec(this.sqlDisableExtensions.enableAll).then(x => {
-                        GenericFunctions.showMessage(message.success, MessageType.ONLY_PRINT);
+                        GenericFunctions.showMessage(Messages.EXTENSIONS_DISABLED, MessageType.ONLY_PRINT);
                     }).catch(error => GenericFunctions.showMessage(error, MessageType.ERROR));
 
                 // Disable extensions
@@ -108,14 +105,14 @@ export class ProfilesManager {
                         if (select) {
                             let sql = GenericFunctions.replaceAll(this.sqlDisableExtensions.update, [{search: '{0}', toReplace: value as string}]);
                             db.exec(sql).then(x => {
-                                GenericFunctions.showMessage(message.success, MessageType.ONLY_PRINT);
+                                GenericFunctions.showMessage(Messages.EXTENSIONS_DISABLED, MessageType.ONLY_PRINT);
                             }).catch(error => GenericFunctions.showMessage(error, MessageType.ERROR));
 
                         // If not exist disabled extension(s)
                         } else {
                             let sql = GenericFunctions.replaceAll(this.sqlDisableExtensions.insert, [{search: '{0}', toReplace: value as string}]);
                             db.exec(sql).then(x => {
-                                GenericFunctions.showMessage(message.success, MessageType.ONLY_PRINT);
+                                GenericFunctions.showMessage(Messages.EXTENSIONS_DISABLED, MessageType.ONLY_PRINT);
                             }).catch(error => GenericFunctions.showMessage(error, MessageType.ERROR));
                         }
                     }).catch(error => GenericFunctions.showMessage(error, MessageType.ERROR));

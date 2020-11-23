@@ -6,6 +6,7 @@ import * as vscode from 'vscode';
 import { StringsReplace } from '../interface/strings-replace';
 import { execSync } from 'child_process';
 import { existsSync } from 'fs';
+import { Messages } from '../enum/messages';
 
 export class GenericFunctions {
 
@@ -92,7 +93,6 @@ export class GenericFunctions {
 	
 	static execShellCMD(shellCommand: ShellCommand, terminal?: vscode.Terminal) {
 		let toExecute: string = shellCommand.executable;
-		let errormsg = this.name + ": ";
 
 		if (toExecute) {
 			if (shellCommand.arguments) {
@@ -114,7 +114,7 @@ export class GenericFunctions {
 						command = 'bash -c \"' + toExecute + '\"';
 						break;
 					default:
-						GenericFunctions.printToOutputChannel(errormsg + "Invalid Operating System!!!");
+						GenericFunctions.printToOutputChannel(Messages.INVALID_PLATFORM);
 						return;
 				}
 
@@ -123,7 +123,7 @@ export class GenericFunctions {
 				GenericFunctions.printToOutputChannel(`${response}`, false);
 			}
 		} else {
-			GenericFunctions.printToOutputChannel(errormsg + "Invalid command!!!");
+			GenericFunctions.printToOutputChannel(Messages.INVALID_COMMAND);
 		}
 	}
 	
