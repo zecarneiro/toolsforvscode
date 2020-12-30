@@ -11,7 +11,8 @@
 		"vscode": "^1.46.0"
 	},
 	"categories": [
-		"Other"
+		"Other",
+		"Extension Packs"
 	],
 	"activationEvents": [
 		"*"
@@ -19,6 +20,10 @@
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
+			{
+				"command": "toolsforvscode.showdefaultprofiles",
+				"title": "Extensions Manager Profile: Show Default Profiles"
+			},
 			{
 				"command": "toolsforvscode.profilesmanager",
 				"title": "Extensions Manager Profile: Show Profiles"
@@ -42,17 +47,22 @@
 					"description": "Format: [{name: 'exemple', data: ['ext1', ...]}, ...]"
 				}
 			}
-		}
+		},
+		"extensionPack": [
+			"formulahendry.terminal",
+			"natqe.reload"
+		]
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./ && npm run compile:setpermission && npm run compile:script",
+		"compile": "tsc -p ./ && npm run copy:files && npm run compile:setpermission && npm run compile:script",
 		"lint": "eslint src --ext ts",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile && npm run lint",
 		"test": "node ./out/test/runTest.js",
-		"compile:setpermission": "chmod +x scriptcompile.sh",
-		"compile:script": "bash -c './scriptcompile.sh'"
+		"copy:files": "cp -r ./src/files ./out",
+		"compile:setpermission": "chmod +x ./src/scripts/scriptcompile.sh",
+		"compile:script": "bash -c './src/scripts/scriptcompile.sh'"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.1",
@@ -70,6 +80,11 @@
 	"dependencies": {
 		"@types/sqlite3": "^3.1.6",
 		"sqlite": "^4.0.17",
-		"sqlite3": "^5.0.0"
+		"sqlite3": "^5.0.0",
+		"moment": "^2.29.1",
+		"@types/node-ssh": "^7.0.0",
+		"@types/ssh2": "^0.5.45",
+		"@types/ssh2-streams": "^0.1.7",
+		"node-ssh": "^11.1.1"
 	}
 }

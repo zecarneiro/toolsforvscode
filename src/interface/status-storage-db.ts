@@ -1,4 +1,4 @@
-export interface StatusStorageDb {
+export interface IStatusStorageDb {
     key: string,
     value: string
 }

@@ -1,49 +1,31 @@
-import { ProfilesManager } from './profiles-manager';
-import { GenericFunctions } from './lib/generic-functions';
+import { ProfilesManager } from './lib/profiles-manager';
 import * as vscode from 'vscode';
 import { Settings } from './settings';
-import { Terminal } from './lib/terminal';
+import { Terminal } from './utils/terminal';
+import { Generic } from './utils/generic';
+
+let generic: Generic;
+let terminal: Terminal;
 
 export function activate(context: vscode.ExtensionContext) {
 	try {
-		let subscriptionsToPush: any[] = [];
-		let terminal = new Terminal();
-		let profilesManager = new ProfilesManager(terminal);
+		terminal = new Terminal(Settings.APP_NAME);
+		generic = new Generic(Settings.APP_NAME, Settings.OUTPUT_CHANNEL, context);
+		let profilesManager = new ProfilesManager(terminal, generic);
 
-		// Insert install command
-		subscriptionsToPush.push(vscode.commands.registerCommand(Settings.CMD_INSTALL, () => {
-			profilesManager.installAllExtension();
-		}));
+		profilesManager.init();
 
-		// Insert uninstall command
-		subscriptionsToPush.push(vscode.commands.registerCommand(Settings.CMD_UNINSTALL, () => {
-			profilesManager.uninstallAllExtension();
-		}));
+		// Create and show collapse/expand all statusbar for extension
+		generic.createStatusBar("$(collapse-all)", "editor.foldAll", "Collapse All");
+		generic.createStatusBar("$(expand-all)", "editor.unfoldAll", "Expand All");
 
-		// Create and show profiles menu
-		subscriptionsToPush.push(vscode.commands.registerCommand(Settings.CMD_PROFILES_MANAGER, () => {
-			profilesManager.createMenu();
-		}));
-		GenericFunctions.createStatusBar('Profiles Manager', Settings.CMD_PROFILES_MANAGER);
-
-		subscriptionsToPush.forEach(value => {
-			context.subscriptions.push(value);
-		});
+		// Create and show collapse/expand region statusbar for extension
+		generic.createStatusBar("$(fold-up)", "editor.foldRecursively", "Collapse Recursive By Cursor");
+		generic.createStatusBar("$(fold-down)", "editor.unfoldRecursively", "Expand Recursive By Cursor");
 	} catch (error) {
 		console.error(error);
 	}
-
-	// Create and show reload statusbar for extension
-	GenericFunctions.createStatusBar('Reload', 'workbench.action.reloadWindow');
-
-	// Create and show collapse/expand all statusbar for extension
-	GenericFunctions.createStatusBar("$(collapse-all)", "editor.foldAll", "Collapse All");
-	GenericFunctions.createStatusBar("$(expand-all)", "editor.unfoldAll", "Expand All");
-
-	// Create and show collapse/expand region statusbar for extension
-	GenericFunctions.createStatusBar("$(fold-up)", "editor.foldRecursively", "Collapse Recursive By Cursor");
-	GenericFunctions.createStatusBar("$(fold-down)", "editor.unfoldRecursively", "Expand Recursive By Cursor");
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
