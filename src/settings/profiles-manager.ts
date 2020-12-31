@@ -8,7 +8,8 @@ export namespace SettingsProfilesManager {
     export const CMD_SHOW_DEFAULT_PROFILES = Settings.EXTENSION_NAME + '.showdefaultprofiles';
 
     // CONFIGURATIONS
-    export const CONFIG_PROFILES = 'profiles';
+    export const CONFIG = 'profiles';
+    export const STATUS_BAR = 'Profiles Manager';
     export const STATE_STORAGE_DISABLED_EXTENSION_KEY = "extensionsIdentifiers/disabled";
     export const DEFAULT_MD_PROFILES_FILE = Settings.FILES_DIR + '/profiles.md';
     export const SQL_DISABLE_EXT = {

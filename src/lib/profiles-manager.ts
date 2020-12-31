@@ -28,15 +28,18 @@ export class ProfilesManager {
         let commands: IRegVsCmd[] = [
             {
                 command: SettingsProfilesManager.CMD_INSTALL,
-                callback: () => { this.installAllExtension(); }
+                callback: () => { this.installAllExtension(); },
+                thisArg: this
             },
             {
                 command: SettingsProfilesManager.CMD_UNINSTALL,
-                callback: () => { this.uninstallAllExtension(); }
+                callback: () => { this.uninstallAllExtension(); },
+                thisArg: this
             },
             {
                 command: SettingsProfilesManager.CMD_PROFILES_MANAGER,
-                callback: () => { this.createMenu(); }
+                callback: () => { this.createMenu(); },
+                thisArg: this
             },
             {
                 command: SettingsProfilesManager.CMD_SHOW_DEFAULT_PROFILES,
@@ -45,11 +48,11 @@ export class ProfilesManager {
             }
         ];
         this.generic.createVscodeCommand(commands);
-        this.generic.createStatusBar('Profiles Manager', SettingsProfilesManager.CMD_PROFILES_MANAGER);
+        this.generic.createStatusBar(SettingsProfilesManager.STATUS_BAR, SettingsProfilesManager.CMD_PROFILES_MANAGER);
     }
 
     private prepareAll() {
-        let profileConfig = Settings.CONFIG_DATA[SettingsProfilesManager.CONFIG_PROFILES] as IProfiles[];
+        let profileConfig = Settings.CONFIG_DATA[SettingsProfilesManager.CONFIG] as IProfiles[];
         profileConfig.forEach(profile => {
             let toIsert = true;
             if (profile.name && profile.data && profile.name.length > 0 && profile.data.length > 0) {
@@ -129,7 +132,7 @@ export class ProfilesManager {
         });
     }
 
-    createMenu() {
+    private createMenu() {
         this.sqliteDB.open().then(res => {
             if (res.status) {
                 let db = res.data;
@@ -183,7 +186,7 @@ export class ProfilesManager {
     /*******************************************************
      * Install/Uninstall Area
      ******************************************************/
-    installAllExtension() {
+    private installAllExtension() {
         this.profilesData.forEach(profile => {
             profile.data.forEach(id => {
                 if (id !== Settings.APP_NAME) {
@@ -193,7 +196,7 @@ export class ProfilesManager {
         });
     }
 
-    uninstallAllExtension() {
+    private uninstallAllExtension() {
         this.profilesData.forEach(profile => {
             profile.data.forEach(id => {
                 if (id !== Settings.EXTENSION_NAME) {

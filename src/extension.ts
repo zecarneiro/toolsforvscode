@@ -1,3 +1,4 @@
+import { GeneratePackageVscode } from './lib/generate-package-vscode';
 import { ProfilesManager } from './lib/profiles-manager';
 import * as vscode from 'vscode';
 import { Settings } from './settings';
@@ -9,11 +10,13 @@ let terminal: Terminal;
 
 export function activate(context: vscode.ExtensionContext) {
 	try {
-		terminal = new Terminal(Settings.APP_NAME);
 		generic = new Generic(Settings.APP_NAME, Settings.OUTPUT_CHANNEL, context);
+		terminal = new Terminal(Settings.APP_NAME, generic);
 		let profilesManager = new ProfilesManager(terminal, generic);
+		let generatePackageVscode = new GeneratePackageVscode(generic, terminal);
 
 		profilesManager.init();
+		generatePackageVscode.init();
 
 		// Create and show collapse/expand all statusbar for extension
 		generic.createStatusBar("$(collapse-all)", "editor.foldAll", "Collapse All");
