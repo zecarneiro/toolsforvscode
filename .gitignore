@@ -3,7 +3,8 @@
 /.vscode/*
 *.vsix
 /test/*
-
+/dist/*
+/utils/*
 !/.vscode/launch.json
 !/.vscode/settings.json
 !/.vscode/tasks.json

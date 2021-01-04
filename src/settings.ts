@@ -1,18 +1,14 @@
-import { PlatformTypeEnum } from './utils/enum/generic';
-import * as vscode from 'vscode';
+import { PlatformTypeEnum } from './utils/enum/generic-enum';
 import * as os from 'os';
 import { Generic } from './utils/generic';
 
 export namespace Settings {
-    export const APP_NAME = "Tools for VSCode";
-    export const EXTENSION_NAME = "toolsforvscode";
-    export const CONFIG_DATA = vscode.workspace.getConfiguration(EXTENSION_NAME);
-    export const OUTPUT_CHANNEL = vscode.window.createOutputChannel(APP_NAME);
+    export const ID = 'josecnoronha.toolsforvscode';
     export const TABLE_STATE_STORAGE = 'ItemTable';
 
     // DIR
-    export const FILES_DIR = __dirname + '/files';
-    export const SCRIPTS_DIR = __dirname + '/scripts';
+    export const FILES_DIR = (generic: Generic) => { return generic.resolvePath(generic.extensionData.path + '/files') as string; };
+    export const SCRIPTS_DIR = (generic: Generic) => { return generic.resolvePath(generic.extensionData.path + '/scripts') as string; };
 
     // FILES
     export const VSCODE_STATE_STORAGE_FILE = (generic: Generic) => {
@@ -30,5 +26,5 @@ export namespace Settings {
                 break;
         }
         return generic.resolvePath(stateStorageFile) as string;
-    }
+    };
 };
