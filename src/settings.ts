@@ -3,7 +3,7 @@ import * as os from 'os';
 import { Generic } from './utils/generic';
 
 export namespace Settings {
-    export const ID = 'josecnoronha.toolsforvscode';
+    export const ID = 'jnoronha.toolsforvscode';
     export const TABLE_STATE_STORAGE = 'ItemTable';
 
     // DIR

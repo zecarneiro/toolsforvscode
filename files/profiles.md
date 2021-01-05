@@ -155,7 +155,9 @@
             "redhat.vscode-xml",
             "redhat.vscode-yaml",
             "formulahendry.auto-rename-tag",
-            "fabianlauer.vs-code-xml-format"
+            "fabianlauer.vs-code-xml-format",
+            "Pivotal.vscode-concourse",
+            "Pivotal.vscode-manifest-yaml"
         ]
     },
     {
@@ -180,6 +182,14 @@
         "name": "C#",
         "data": [
             "ms-dotnettools.csharp"
+        ]
+    },
+    {
+        "name": "Spring",
+        "data": [
+            "Pivotal.vscode-spring-boot",
+            "vscjava.vscode-spring-initializr",
+            "vscjava.vscode-spring-boot-dashboard"
         ]
     }
 ]
