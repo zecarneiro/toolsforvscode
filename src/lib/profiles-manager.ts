@@ -22,7 +22,7 @@ export class ProfilesManager {
     // CONFIGURATIONS
     private defaultMdProfilesFile: string;
     private readonly config = 'profiles';
-    private readonly statusBar = 'Profiles Manager';
+    private readonly activityBarId = 'tools-vscode-jnoronha-profiles';
     private readonly stateStorageDisabledExtensionKey = "extensionsIdentifiers/disabled";
     private readonly sqlDisableExt = {
         getAll: `SELECT * FROM ${Settings.TABLE_STATE_STORAGE} WHERE key = '${this.stateStorageDisabledExtensionKey}'`,
@@ -50,12 +50,12 @@ export class ProfilesManager {
         let commands: IRegVsCmd[] = [
             {
                 command: this.cmdInstall,
-                callback: () => { this.extensionManager(true); },
+                callback: () => { this.InstallUninstallExt(true); },
                 thisArg: this
             },
             {
                 command: this.cmdUninstall,
-                callback: () => { this.extensionManager(false); },
+                callback: () => { this.InstallUninstallExt(false); },
                 thisArg: this
             },
             {
@@ -69,8 +69,25 @@ export class ProfilesManager {
                 thisArg: this
             }
         ];
+        // add activity bar
+        let activityBar: vscode.TreeItem[] = [
+            {
+                label: "Install Extensions",
+                command: { command: this.cmdInstall, title: '' }
+            },
+            {
+                label: "Uninstall Extensions",
+                command: { command: this.cmdUninstall, title: '' }
+            },
+            {
+                label: "Show My Default Extensions",
+                command: { command: this.cmdShowDefaultProfiles, title: '' }
+            }
+        ];
+
         this.generic.createVscodeCommand(commands);
-        this.generic.createStatusBar(this.statusBar, this.cmdProfilesManager);
+        this.generic.createStatusBar({ text: 'Profiles Manager', command: this.cmdProfilesManager });
+        this.generic.createActivityBar(activityBar, this.activityBarId, true);
     }
 
     private prepareAll() {
@@ -220,7 +237,7 @@ export class ProfilesManager {
     /*******************************************************
      * Install/Uninstall Area
      ******************************************************/
-    private extensionManager(isInstall: boolean) {
+    private InstallUninstallExt(isInstall: boolean) {
         this.profilesData.forEach(profile => {
             profile.data.forEach(id => {
                 if (id !== this.generic.extensionData.id) {

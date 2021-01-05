@@ -14,14 +14,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 		profilesManager.init();
 		extraToolsVscode.init();
-
-		// Create and show collapse/expand all statusbar for extension
-		generic.createStatusBar("$(collapse-all)", "editor.foldAll", "Collapse All");
-		generic.createStatusBar("$(expand-all)", "editor.unfoldAll", "Expand All");
-
-		// Create and show collapse/expand region statusbar for extension
-		generic.createStatusBar("$(fold-up)", "editor.foldRecursively", "Collapse Recursive By Cursor");
-		generic.createStatusBar("$(fold-down)", "editor.unfoldRecursively", "Expand Recursive By Cursor");
 	} catch (error) {
 		console.error(error);
 	}
