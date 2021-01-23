@@ -23,7 +23,8 @@
             "tombonnike.vscode-status-bar-format-toggle",
             "wayou.vscode-todo-highlight",
             "akmarnafi.comment-headers",
-            "rpinski.shebang-snippets"
+            "rpinski.shebang-snippets",
+            "IBM.output-colorizer"
         ]
     },
     {
