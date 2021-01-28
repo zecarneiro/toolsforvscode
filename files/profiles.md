@@ -56,10 +56,11 @@
         ]
     },
     {
-        "name": "Latex",
+        "name": "Latex/ASCIIDOC",
         "data": [
             "ajshort.latex-preview",
-            "torn4dom4n.latex-support"
+            "torn4dom4n.latex-support",
+            "joaompinto.asciidoctor-vscode"
         ]
     },
     {
