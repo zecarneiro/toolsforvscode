@@ -20,7 +20,6 @@
             "naumovs.color-highlight",
             "chrmarti.regex",
             "liximomo.sftp",
-            "tombonnike.vscode-status-bar-format-toggle",
             "wayou.vscode-todo-highlight",
             "akmarnafi.comment-headers",
             "rpinski.shebang-snippets",
