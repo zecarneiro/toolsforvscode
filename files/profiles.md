@@ -23,13 +23,14 @@
             "wayou.vscode-todo-highlight",
             "akmarnafi.comment-headers",
             "rpinski.shebang-snippets",
-            "IBM.output-colorizer"
+            "IBM.output-colorizer",
+            "formulahendry.terminal",
+            "natqe.reload"
         ]
     },
     {
         "name": "Git",
         "data": [
-            "mhutchie.git-graph",
             "eamodio.gitlens"
         ]
     },
