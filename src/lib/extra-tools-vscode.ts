@@ -1,61 +1,65 @@
-import { PlatformTypeEnum } from './../utils/enum/generic-enum';
-import { Terminal } from './../utils/terminal';
-import { IProcessing } from '../utils/interface/generic-interface';
-import { Generic } from "../utils/generic";
-import { IRegVsCmd } from "../utils/interface/generic-interface";
-import * as vscode from 'vscode';
+import { LibStatic } from './../utils/lib-static';
+import { App } from '../app';
+import { ExtensionContext, QuickPickItem, workspace } from 'vscode';
+import { NotifyEnum, PlatformTypeEnum } from '../utils/enum/lib-enum';
+import { IProcessing } from '../utils/interface/lib-interface';
+import { ShellTypeEnum } from '../utils/enum/console-extends-enum';
 
-export class ExtraToolsVscode {
+export class ExtraToolsVscode extends App {
     // Commands
     private cmdGeneratePackage: string;
     private cmdPrepareDependencyCreateNewExtension: string;
     private cmdCreateNewExtension: string;
     private cmdRestartVscode: string;
+    private cmdChangeJavaVersions: string;
 
     // Others
-    private readonly activityBarId = 'tools-vscode-jnoronha-tools';
-    private createExtensionsTerminal: Terminal | undefined;
+    readonly activityBarId = 'tools-vscode-jnoronha-tools';
+    readonly scripts = {
+        linux: LibStatic.resolvePath<string>(this.scriptsDir + '/forwindows.sh'),
+        windows: LibStatic.resolvePath<string>(this.scriptsDir + '/forwindows.ps1')
+    };
 
     constructor(
-        private generic: Generic
+        context: ExtensionContext
     ) {
-        this.cmdGeneratePackage = generic.extensionData.name + '.generatepackage';
-        this.cmdPrepareDependencyCreateNewExtension = generic.extensionData.name + '.preparedependencycreateextension';
-        this.cmdCreateNewExtension = generic.extensionData.name + '.createnewextension';
-        this.cmdRestartVscode = generic.extensionData.name + '.restartvscode';
-    }
+        super(context);
 
-    init() {
-        let commands: IRegVsCmd[] = [
+        this.cmdGeneratePackage = this.lib.extensionData.name + '.generatepackage';
+        this.cmdPrepareDependencyCreateNewExtension = this.lib.extensionData.name + '.preparedependencycreateextension';
+        this.cmdCreateNewExtension = this.lib.extensionData.name + '.createnewextension';
+        this.cmdRestartVscode = this.lib.extensionData.name + '.restartvscode';
+        this.cmdChangeJavaVersions = this.lib.extensionData.name + '.changejavaversions';
+
+        this.insertVscodeCommands([
             {
                 command: this.cmdGeneratePackage,
-                callback: () => { this.generateVsixPackages(); },
+                callback: this.generateVsixPackages,
                 thisArg: this
             },
             {
                 command: this.cmdPrepareDependencyCreateNewExtension,
                 callback: () => {
-                    this.generic.extensionData.terminal.exec('npm install -g yo');
-                    this.generic.extensionData.terminal.exec('npm install -g typescript');
-                    this.generic.extensionData.terminal.exec('npm install -g yo generator-code');
-                    this.generic.extensionData.terminal.exec('npm install -g vsce');
+                    this.lib.consoleExtend.execTerminal('npm install -g yo', undefined, ShellTypeEnum.system);
+                    this.lib.consoleExtend.execTerminal('npm install -g typescript', undefined, ShellTypeEnum.system);
+                    this.lib.consoleExtend.execTerminal('npm install -g yo generator-code', undefined, ShellTypeEnum.system);
+                    this.lib.consoleExtend.execTerminal('npm install -g vsce', undefined, ShellTypeEnum.system);
                 },
                 thisArg: this
             },
             {
                 command: this.cmdCreateNewExtension,
-                callback: () => { this.createNewExtensions(); },
+                callback: this.createNewExtensions,
                 thisArg: this
             },
             {
                 command: this.cmdRestartVscode,
-                callback: () => { this.restartVscode(); },
+                callback: this.restartVscode,
                 thisArg: this
-            }
-        ];
-
-        // add activity bar
-        let activityBar: vscode.TreeItem[] = [
+            },
+            { command: this.cmdChangeJavaVersions, callback: this.changeJavaVersions, thisArg: this }
+        ]);
+        this.insertActivityBar([
             {
                 label: "Generate VSIX",
                 command: { command: this.cmdGeneratePackage, title: '' }
@@ -67,89 +71,54 @@ export class ExtraToolsVscode {
             {
                 label: "Create Extension",
                 command: { command: this.cmdCreateNewExtension, title: '' }
+            },
+            {
+                label: "Restart VSCode",
+                command: { command: this.cmdRestartVscode, title: '' }
+            },
+            {
+                label: "Change Java Versions",
+                command: { command: this.cmdChangeJavaVersions, title: '' }
             }
-        ];
-
-        this.generic.createVscodeCommand(commands);
-        this.generic.createActivityBar(activityBar, this.activityBarId, true);
-        this.generic.createStatusBar({ text: "Restart", command: this.cmdRestartVscode, tooltip: 'Restart VSCode' });
+        ]);
 
         // Create and show collapse/expand all statusbar for extension
-        this.generic.createStatusBar({ text: "$(collapse-all)", command: "editor.foldAll", tooltip: "Collapse All" });
-        this.generic.createStatusBar({ text: "$(expand-all)", command: "editor.unfoldAll", tooltip: "Expand All" });
+        LibStatic.createStatusBar({ text: "$(collapse-all)", command: "editor.foldAll", tooltip: "Collapse All" });
+        LibStatic.createStatusBar({ text: "$(expand-all)", command: "editor.unfoldAll", tooltip: "Expand All" });
 
         // Create and show collapse/expand region statusbar for extension
-        this.generic.createStatusBar({ text: "$(fold-up)", command: "editor.foldRecursively", tooltip: "Collapse Recursive By Cursor" });
-        this.generic.createStatusBar({ text: "$(fold-down)", command: "editor.unfoldRecursively", tooltip: "Expand Recursive By Cursor" });
+        LibStatic.createStatusBar({ text: "$(fold-up)", command: "editor.foldRecursively", tooltip: "Collapse Recursive By Cursor" });
+        LibStatic.createStatusBar({ text: "$(fold-down)", command: "editor.unfoldRecursively", tooltip: "Expand Recursive By Cursor" });
     }
 
     private restartVscode() {
-        let output = this.generic.extensionData.terminal.execOnOutputChanel("code -s", undefined, true);
-        if (output && output.stdout) {
-            let outputCodeMainArr = output.stdout?.split('\r\n')?.find(x => x.includes('code main'))?.split('\t');
-            if (outputCodeMainArr) {
-                let indexWithPid = 2;
-                let scripts = {
-                    linux: this.generic.extensionData.path + '/scripts/restart-vscode.sh',
-                    windows: this.generic.extensionData.path + '/scripts/restart-vscode.ps1'
-                };
-                if (outputCodeMainArr[indexWithPid]) {
-                    let value: string | undefined;
-                    switch (this.generic.getPlatform()) {
-                        case PlatformTypeEnum.windows:
-                            value = `${scripts.windows} ${outputCodeMainArr[indexWithPid]?.trim()}`;
-                            break;
-                        case PlatformTypeEnum.linux:
-                            value = `${scripts.linux} ${outputCodeMainArr[indexWithPid]?.trim()}`;
-                            break;
-                        case PlatformTypeEnum.osx: // TODO: IMPLEMENT TO OSX
-                            this.generic.notify("Not implemented yet!!!");
-                            break;
-                    }
-
-                    if (value) {
-                        value = this.generic.resolvePath(value) as string;
-                        this.generic.extensionData.terminal.execOnOutputChanel(value, undefined);
-                    }
-                }
-            }
+        switch (LibStatic.getPlatform()) {
+            case PlatformTypeEnum.windows:
+                this.lib.consoleExtend.execOutputChannel(`${this.scripts.windows} -RESTART_VSCODE 1`, undefined, ShellTypeEnum.powershell);
+                break;
+            case PlatformTypeEnum.linux:
+                LibStatic.notify("Not implemented yet!!!", NotifyEnum.warning);
+                break;
+            case PlatformTypeEnum.osx: // TODO: IMPLEMENT TO OSX
+                LibStatic.notify("Not implemented yet!!!", NotifyEnum.warning);
+                break;
         }
     }
 
-    private createNewExtensions() {
-        this.generic.showOpenDialog({ canSelectFolders: true }).then(result => {
-            let path: string = result && result[0] && result[0]["path"] ? result[0]["path"] : '';
-            console.log(path);
-            if (path.length > 0) {
-                if (!this.createExtensionsTerminal) {
-                    this.createExtensionsTerminal = new Terminal('Create Extensions', this.generic);
-                }
-                path = this.generic.resolvePath(path) as string;
-                let separatorCommands: string | undefined;
-                switch (this.generic.getPlatform()) {
-                    case PlatformTypeEnum.linux:
-                        separatorCommands = '&&';
-                        break;
-                    case PlatformTypeEnum.windows:
-                        separatorCommands = ';';
-                        break;
-                    case PlatformTypeEnum.osx: // TODO: IMPLEMENT TO OSX
-                        this.generic.notify("Not implemented yet!!!");
-                        break;
-                }
-
-                if (separatorCommands) {
-                    this.createExtensionsTerminal.exec(`cd '${path}'${separatorCommands} yo code`);
-                }
-            }
-        });
+    private async createNewExtensions() {
+        let result = await LibStatic.showOpenDialog({ canSelectFolders: true });
+        let path: string = result && result[0] && result[0]["path"] ? result[0]["path"] : '';
+        if (path.length > 0) {
+            path = LibStatic.resolvePath(path);
+            this.lib.consoleExtend.execTerminal('yo code', path, ShellTypeEnum.system);
+        }
     }
 
     private generateVsixPackages() {
-        let workspaceDir: string = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : '';
+        let workspaceDir: string = workspace.workspaceFolders ? workspace.workspaceFolders[0].uri.fsPath : '';
         if (workspaceDir.length > 0) {
             let processing: IProcessing;
-            let vscodeIgnoreFile = this.generic.resolvePath(workspaceDir + '/.vscodeignore') as string;
+            let vscodeIgnoreFile = LibStatic.resolvePath<string>(workspaceDir + '/.vscodeignore');
             let vscodeIgnoreData: string[] = [
                 ".vscode/**",
                 ".vscode-test/**",
@@ -173,8 +142,8 @@ export class ExtraToolsVscode {
             let dataToInsert: string = '';
             let isNewDataInserted = false;
 
-            if (this.generic.fileExist(vscodeIgnoreFile)) {
-                dataToInsert = this.generic.readDocument(vscodeIgnoreFile).trim();
+            if (LibStatic.fileExist(vscodeIgnoreFile, false)) {
+                dataToInsert = LibStatic.readDocument(vscodeIgnoreFile).trim();
             }
 
             vscodeIgnoreData.forEach(newData => {
@@ -185,15 +154,40 @@ export class ExtraToolsVscode {
             });
 
             if (isNewDataInserted) {
-                processing = this.generic.showProcessing("Write " + vscodeIgnoreFile);
-                this.generic.writeDocument(vscodeIgnoreFile, dataToInsert);
+                processing = LibStatic.showProcessing("Write " + vscodeIgnoreFile, this.lib.consoleExtend.outputChannel);
+                LibStatic.writeDocument(vscodeIgnoreFile, dataToInsert);
                 processing.disable();
             }
 
-            processing = this.generic.showProcessing("Create package");
-            this.generic.extensionData.terminal.execOnOutputChanel('vsce package', workspaceDir);
+            processing = LibStatic.showProcessing("Create package", this.lib.consoleExtend.outputChannel);
+            this.lib.consoleExtend.execOutputChannel('vsce package', workspaceDir);
             processing.disable();
-            this.generic.printOutputChannel("Done");
+            this.lib.consoleExtend.onOutputChannel("Done");
+        }
+    }
+
+    private changeJavaVersions() {
+        const javaEnv = LibStatic.readEnvVariable("JAVA_HOME");
+        const javaVersionsConfig = this.lib.extensionData.configData["javaversions"] as Object;
+        if (javaVersionsConfig) {
+            let items: QuickPickItem[] = [];
+
+            Object.entries(javaVersionsConfig).forEach(([key, value]) => {
+                value = LibStatic.resolvePath<string>(value);
+                value = value.substr(value.length - 1) === '/' || value.substr(value.length - 1) === '\\'
+                    ? value.slice(0, -1) : value;
+                let isActive = javaEnv === value;
+                items.push({label: key, detail: value, description: isActive ? 'ACTIVE' : ''});
+            });
+            LibStatic.createQuickPick(items, { canPickMany: false }).then((selection) => {
+                selection = selection as QuickPickItem | undefined;
+                // User made final selection
+                if (!selection) {
+                    return;
+                } else {
+                    this.lib.consoleExtend.runCommandPowerShellAsAdmin(`${this.scripts.windows} -JAVA_PATH '${selection.detail}'`);
+                }
+            });
         }
     }
 }

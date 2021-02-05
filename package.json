@@ -6,53 +6,19 @@
 	"name": "toolsforvscode",
 	"displayName": "Tools for VSCode",
 	"description": "Collapse, Expand, Reload and Enable, Disable, Install and Uninstall Extensions",
-	"version": "2.1.3",
+	"version": "2.1.4",
 	"engines": {
 		"vscode": "^1.46.0"
 	},
 	"categories": [
-		"Other",
-		"Extension Packs"
+		"Other"
 	],
 	"activationEvents": [
 		"*"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
-		"commands": [
-			{
-				"command": "toolsforvscode.showdefaultprofiles",
-				"title": "Tools For VSCode: Show Default Profiles"
-			},
-			{
-				"command": "toolsforvscode.profilesmanager",
-				"title": "Tools For VSCode: Show Profiles"
-			},
-			{
-				"command": "toolsforvscode.extensionsinstall",
-				"title": "Tools For VSCode: Install all extensions in profile data settings"
-			},
-			{
-				"command": "toolsforvscode.extensionsuninstall",
-				"title": "Tools For VSCode: Uninstall all extensions in profile data settings"
-			},
-			{
-				"command": "toolsforvscode.generatepackage",
-				"title": "Tools For VSCode: Show Generate Package Type"
-			},
-			{
-				"command": "toolsforvscode.preparedependencycreateextension",
-				"title": "Tools For VSCode: Prepare all dependencies to create extensions"
-			},
-			{
-				"command": "toolsforvscode.createnewextension",
-				"title": "Tools For VSCode: Create new Extension"
-			},
-			{
-				"command": "toolsforvscode.restartvscode",
-				"title": "Tools For VSCode: Restart VSCODE"
-			}
-		],
+		"commands": [],
 		"configuration": {
 			"title": "Tools for VSCode",
 			"properties": {
@@ -61,6 +27,12 @@
 					"type": "array",
 					"default": [],
 					"description": "Format: [{name: 'exemple', data: ['ext1', ...]}, ...]"
+				},
+				"toolsforvscode.javaversions": {
+					"title": "Java Versions",
+					"type": "object",
+					"default": {},
+					"definitions": "Format: {javaversions: javapath,...}"
 				}
 			}
 		},
@@ -86,10 +58,6 @@
 			]
 		}
 	},
-	"extensionPack": [
-		"formulahendry.terminal",
-		"natqe.reload"
-	],
 	"scripts": {
 		"vscode:prepublish": "npm run package",
 		"compile": "npm run delete:dist && tsc -p ./ && npm run prepare:utils",

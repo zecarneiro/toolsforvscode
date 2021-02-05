@@ -20,17 +20,17 @@
             "naumovs.color-highlight",
             "chrmarti.regex",
             "liximomo.sftp",
-            "tombonnike.vscode-status-bar-format-toggle",
             "wayou.vscode-todo-highlight",
             "akmarnafi.comment-headers",
             "rpinski.shebang-snippets",
-            "IBM.output-colorizer"
+            "IBM.output-colorizer",
+            "formulahendry.terminal",
+            "natqe.reload"
         ]
     },
     {
         "name": "Git",
         "data": [
-            "mhutchie.git-graph",
             "eamodio.gitlens"
         ]
     },
@@ -56,10 +56,11 @@
         ]
     },
     {
-        "name": "Latex",
+        "name": "Latex/ASCIIDOC",
         "data": [
             "ajshort.latex-preview",
-            "torn4dom4n.latex-support"
+            "torn4dom4n.latex-support",
+            "joaompinto.asciidoctor-vscode"
         ]
     },
     {

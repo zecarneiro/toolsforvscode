@@ -1,17 +1,16 @@
+import { LibStatic } from './../utils/lib-static';
 import { IStatusStorageDb } from '../interface/status-storage-db-interface';
-import { NotifyEnum } from '../utils/enum/generic-enum';
 import { ProfileManagerMsgEnum } from '../enum/profiles-manager-enum';
 import { IDisabledExt } from '../interface/profiles-manager-interface';
-import { IRegVsCmd } from '../utils/interface/generic-interface';
-import { SqliteFunctions } from '../utils/sqlite-functions';
-import { Settings } from "../settings";
-import * as vscode from 'vscode';
-import { Generic } from '../utils/generic';
 import { IProfiles } from '../interface/profiles-manager-interface';
+import { App } from '../app';
+import { ExtensionContext, extensions, QuickPickItem } from 'vscode';
+import { NotifyEnum } from '../utils/enum/lib-enum';
 
-export class ProfilesManager {
+export class ProfilesManager extends App {
+    readonly activityBarId = 'tools-vscode-jnoronha-profiles';
+
     private profilesData: IProfiles[];
-    private sqliteDB: SqliteFunctions;
 
     // Commands
     private cmdProfilesManager: string;
@@ -20,34 +19,28 @@ export class ProfilesManager {
     private cmdShowDefaultProfiles: string;
 
     // CONFIGURATIONS
-    private defaultMdProfilesFile: string;
+    private readonly defaultMdProfilesFile = LibStatic.resolvePath<string>(this.filesDir + '/profiles.md');
     private readonly config = 'profiles';
-    private readonly activityBarId = 'tools-vscode-jnoronha-profiles';
+    
     private readonly stateStorageDisabledExtensionKey = "extensionsIdentifiers/disabled";
     private readonly sqlDisableExt = {
-        getAll: `SELECT * FROM ${Settings.TABLE_STATE_STORAGE} WHERE key = '${this.stateStorageDisabledExtensionKey}'`,
-        update: `UPDATE ${Settings.TABLE_STATE_STORAGE} SET value = '{0}' WHERE key = '${this.stateStorageDisabledExtensionKey}'`,
-        insert: `INSERT INTO ${Settings.TABLE_STATE_STORAGE} (key, value) VALUES ('${this.stateStorageDisabledExtensionKey}', '{0}')`,
-        enableAll: `DELETE FROM ${Settings.TABLE_STATE_STORAGE} WHERE key = '${this.stateStorageDisabledExtensionKey}'`
+        getAll: `SELECT * FROM ${this.tableStateStorage} WHERE key = '${this.stateStorageDisabledExtensionKey}'`,
+        update: `UPDATE ${this.tableStateStorage} SET value = '{0}' WHERE key = '${this.stateStorageDisabledExtensionKey}'`,
+        insert: `INSERT INTO ${this.tableStateStorage} (key, value) VALUES ('${this.stateStorageDisabledExtensionKey}', '{0}')`,
+        enableAll: `DELETE FROM ${this.tableStateStorage} WHERE key = '${this.stateStorageDisabledExtensionKey}'`
     };
 
     constructor(
-        private generic: Generic
+        context: ExtensionContext
     ) {
-        this.sqliteDB = new SqliteFunctions(generic);
+        super(context);
         this.profilesData = [];
-        this.defaultMdProfilesFile = generic.resolvePath(Settings.FILES_DIR(generic) + '/profiles.md') as string;
-        this.cmdProfilesManager = generic.extensionData.name + '.profilesmanager';
-        this.cmdInstall = generic.extensionData.name + '.extensionsinstall';
-        this.cmdUninstall = generic.extensionData.name + '.extensionsuninstall';
-        this.cmdShowDefaultProfiles = generic.extensionData.name + '.showdefaultprofiles';
+        this.cmdProfilesManager = this.lib.extensionData.name + '.profilesmanager';
+        this.cmdInstall = this.lib.extensionData.name + '.extensionsinstall';
+        this.cmdUninstall = this.lib.extensionData.name + '.extensionsuninstall';
+        this.cmdShowDefaultProfiles = this.lib.extensionData.name + '.showdefaultprofiles';
 
-        // Functions
-        this.prepareAll();
-    }
-
-    init() {
-        let commands: IRegVsCmd[] = [
+        this.insertVscodeCommands([
             {
                 command: this.cmdInstall,
                 callback: () => { this.InstallUninstallExt(true); },
@@ -60,17 +53,17 @@ export class ProfilesManager {
             },
             {
                 command: this.cmdProfilesManager,
-                callback: () => { this.createMenu(); },
+                callback: this.createMenu,
                 thisArg: this
             },
             {
                 command: this.cmdShowDefaultProfiles,
-                callback: () => { this.generic.showFilesMD(this.defaultMdProfilesFile); },
+                callback: () => { LibStatic.showFilesMD(this.defaultMdProfilesFile); },
                 thisArg: this
             }
-        ];
-        // add activity bar
-        let activityBar: vscode.TreeItem[] = [
+        ]);
+
+        this.insertActivityBar([
             {
                 label: "Install Extensions",
                 command: { command: this.cmdInstall, title: '' }
@@ -83,30 +76,30 @@ export class ProfilesManager {
                 label: "Show My Default Extensions",
                 command: { command: this.cmdShowDefaultProfiles, title: '' }
             }
-        ];
+        ]);
+        LibStatic.createStatusBar({ text: 'Profiles Manager', command: this.cmdProfilesManager });
 
-        this.generic.createVscodeCommand(commands);
-        this.generic.createStatusBar({ text: 'Profiles Manager', command: this.cmdProfilesManager });
-        this.generic.createActivityBar(activityBar, this.activityBarId, true);
+        // Functions
+        this.prepareAll();
     }
 
     private prepareAll() {
-        let profileConfig = this.generic.extensionData.configData[this.config] as IProfiles[];
+        let profileConfig = this.lib.extensionData.configData[this.config] as IProfiles[];
         profileConfig.forEach(profile => {
             let toIsert = true;
             if (profile.name && profile.data && profile.name.length > 0 && profile.data.length > 0) {
                 if (this.profilesData.length <= 0) {
                     toIsert = true;
                 } else if (this.profilesData.findIndex(value => value.name === profile.name) !== -1) {
-                    const msg = this.generic.stringReplaceAll(ProfileManagerMsgEnum.PROFILE_EXISTS, [{ search: '{0}', toReplace: profile.name }]);
+                    const msg = LibStatic.stringReplaceAll(ProfileManagerMsgEnum.PROFILE_EXISTS, [{ search: '{0}', toReplace: profile.name }]);
                     toIsert = false;
-                    this.generic.printOutputChannel(msg, { title: this.prepareAll.name, isNewLine: true });
+                    this.lib.consoleExtend.onOutputChannel(msg, { title: this.prepareAll.name, isNewLine: true });
                 } else {
                     for (const key in profile.data) {
                         if (this.profilesData.findIndex(x => x.data.indexOf(profile.data[key]) >= 0) !== -1) {
-                            const msg = this.generic.stringReplaceAll(ProfileManagerMsgEnum.PROFILE_EXISTS, [{ search: '{0}', toReplace: profile.data[key] }]);
+                            const msg = LibStatic.stringReplaceAll(ProfileManagerMsgEnum.PROFILE_EXISTS, [{ search: '{0}', toReplace: profile.data[key] }]);
                             toIsert = false;
-                            this.generic.printOutputChannel(msg, { title: this.prepareAll.name, isNewLine: true });
+                            this.lib.consoleExtend.onOutputChannel(msg, { title: this.prepareAll.name, isNewLine: true });
                             break;
                         }
                     }
@@ -119,7 +112,7 @@ export class ProfilesManager {
                 this.profilesData.push(profile);
             }
         });
-        this.sqliteDB.file = Settings.VSCODE_STATE_STORAGE_FILE(this.generic);
+        this.lib.sqliteExtend.file = LibStatic.getVscodeStorageStateFile();
     }
 
     private disableExtensions(profiles: string[]) {
@@ -129,7 +122,7 @@ export class ProfilesManager {
             const index = profiles.findIndex(x => x === profile.name);
             if (index === -1) {
                 profile.data.forEach(id => {
-                    const extension = vscode.extensions.getExtension(id);
+                    const extension = extensions.getExtension(id);
                     if (profilesToDisabled.indexOf(profile.name) < 0) {
                         profilesToDisabled.push(profile.name);
                     }
@@ -140,43 +133,41 @@ export class ProfilesManager {
 
         // Enable All Extensions
         if (toDisable.length === 0) {
-            this.sqliteDB.exec(this.sqlDisableExt.enableAll, (result) => {
+            this.lib.sqliteExtend.exec(this.sqlDisableExt.enableAll, (result) => {
                 if (result.error) {
-                    this.generic.notify(result.error, NotifyEnum.error);
+                    LibStatic.notify(result.error, NotifyEnum.error);
                 } else {
-                    this.generic.notify(ProfileManagerMsgEnum.EXTENSIONS_ENABLED);
+                    LibStatic.notify(ProfileManagerMsgEnum.EXTENSIONS_DISABLED_ENABLED);
                 }
             });
         }
         // Disable extensions
         else {
-            this.sqliteDB.exec(this.sqlDisableExt.getAll, (result) => {
+            this.lib.sqliteExtend.exec(this.sqlDisableExt.getAll, (result) => {
                 if (result.error) {
-                    this.generic.notify(result.error, NotifyEnum.error);
+                    LibStatic.notify(result.error, NotifyEnum.error);
                 } else {
-                    const value = this.generic.stringToJson(toDisable, true);
+                    const value = LibStatic.stringToJson(toDisable, true);
 
                     // If already exist disabled extension(s)
                     if (result.data) {
-                        let sql = this.generic.stringReplaceAll(this.sqlDisableExt.update, [{ search: '{0}', toReplace: value }]);
-                        this.sqliteDB.exec(sql, (result) => {
+                        let sql = LibStatic.stringReplaceAll(this.sqlDisableExt.update, [{ search: '{0}', toReplace: value }]);
+                        this.lib.sqliteExtend.exec(sql, (result) => {
                             if (result.error) {
-                                this.generic.notify(result.error, NotifyEnum.error);
+                                LibStatic.notify(result.error, NotifyEnum.error);
                             } else {
-                                let message = this.generic.stringReplaceAll(ProfileManagerMsgEnum.EXTENSIONS_DISABLED, [{ search: '{0}', toReplace: profilesToDisabled.toString() }]);
-                                this.generic.notify(message);
+                                LibStatic.notify(ProfileManagerMsgEnum.EXTENSIONS_DISABLED_ENABLED);
                             }
                         });
                     }
                     // If not exist disabled extension(s)
                     else {
-                        let sql = this.generic.stringReplaceAll(this.sqlDisableExt.insert, [{ search: '{0}', toReplace: value }]);
-                        this.sqliteDB.exec(sql, (result) => {
+                        let sql = LibStatic.stringReplaceAll(this.sqlDisableExt.insert, [{ search: '{0}', toReplace: value }]);
+                        this.lib.sqliteExtend.exec(sql, (result) => {
                             if (result.error) {
-                                this.generic.notify(result.error, NotifyEnum.error);
+                                LibStatic.notify(result.error, NotifyEnum.error);
                             } else {
-                                let message = this.generic.stringReplaceAll(ProfileManagerMsgEnum.EXTENSIONS_DISABLED, [{ search: '{0}', toReplace: profilesToDisabled.toString() }]);
-                                this.generic.notify(message);
+                                LibStatic.notify(ProfileManagerMsgEnum.EXTENSIONS_DISABLED_ENABLED);
                             }
                         });
                     }
@@ -186,16 +177,16 @@ export class ProfilesManager {
     }
 
     private createMenu() {
-        this.sqliteDB.exec(this.sqlDisableExt.getAll, (result) => {
+        this.lib.sqliteExtend.exec(this.sqlDisableExt.getAll, (result) => {
             if (result.error) {
-                this.generic.notify(result.error, NotifyEnum.error);
+                LibStatic.notify(result.error, NotifyEnum.error);
             } else {
                 let extensionsDisabled: IStatusStorageDb[] = result.data as IStatusStorageDb[];
                 let extensionsDisabledData: IDisabledExt[] = [];
-                let items: vscode.QuickPickItem[] = [];
+                let items: QuickPickItem[] = [];
 
                 if (extensionsDisabled && extensionsDisabled.length > 0) {
-                    extensionsDisabledData = this.generic.stringToJson(extensionsDisabled[0].value, false) as IDisabledExt[];
+                    extensionsDisabledData = LibStatic.stringToJson(extensionsDisabled[0].value, false) as IDisabledExt[];
                 }
 
                 this.profilesData.forEach(element => {
@@ -211,7 +202,7 @@ export class ProfilesManager {
                     for (const extId in element.data) {
                         if (
                             extensionsDisabledData.findIndex(x => x.id === element.data[extId]) !== -1
-                            || !vscode.extensions.getExtension(element.data[extId])
+                            || !extensions.getExtension(element.data[extId])
                         ) {
                             isPicked = false;
                             break;
@@ -219,8 +210,8 @@ export class ProfilesManager {
                     }
                     items.push({ label: element.name, picked: isPicked, description: description });
                 });
-                this.generic.createQuickPick(items, { canPickMany: true }).then((selection) => {
-                    selection = selection as vscode.QuickPickItem[] | undefined;
+                LibStatic.createQuickPick(items, { canPickMany: true }).then((selection) => {
+                    selection = selection as QuickPickItem[] | undefined;
                     // User made final selection
                     if (!selection) {
                         return;
@@ -239,15 +230,17 @@ export class ProfilesManager {
      ******************************************************/
     private InstallUninstallExt(isInstall: boolean) {
         this.profilesData.forEach(profile => {
+            let ids: string[] = [];
             profile.data.forEach(id => {
-                if (id !== this.generic.extensionData.id) {
-                    if (isInstall) {
-                        this.generic.installUninstallExtensions(id);
-                    } else {
-                        this.generic.installUninstallExtensions(id, true);
-                    }
+                if (id !== App.id) {
+                    ids.push(id);
                 }
             });
+            if (isInstall) {
+                LibStatic.installUninstallExtensions(ids, this.lib.consoleExtend);
+            } else {
+                LibStatic.installUninstallExtensions(ids, this.lib.consoleExtend, true);
+            }
         });
     }
 }
