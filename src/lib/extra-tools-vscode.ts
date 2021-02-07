@@ -1,36 +1,23 @@
 import { LibStatic } from './../utils/lib-static';
 import { App } from '../app';
 import { ExtensionContext, QuickPickItem, workspace } from 'vscode';
-import { NotifyEnum, PlatformTypeEnum } from '../utils/enum/lib-enum';
 import { IProcessing } from '../utils/interface/lib-interface';
 import { ShellTypeEnum } from '../utils/enum/console-extends-enum';
 
 export class ExtraToolsVscode extends App {
     // Commands
-    private cmdGeneratePackage: string;
-    private cmdPrepareDependencyCreateNewExtension: string;
-    private cmdCreateNewExtension: string;
-    private cmdRestartVscode: string;
-    private cmdChangeJavaVersions: string;
+    private cmdGeneratePackage = this.lib.extensionData.name + '.generatepackage';
+    private cmdPrepareDependencyCreateNewExtension = this.lib.extensionData.name + '.preparedependencycreateextension';
+    private cmdCreateNewExtension = this.lib.extensionData.name + '.createnewextension';
+    private cmdChangeJavaVersions = this.lib.extensionData.name + '.changejavaversions';
 
     // Others
     readonly activityBarId = 'tools-vscode-jnoronha-tools';
-    readonly scripts = {
-        linux: LibStatic.resolvePath<string>(this.scriptsDir + '/forwindows.sh'),
-        windows: LibStatic.resolvePath<string>(this.scriptsDir + '/forwindows.ps1')
-    };
 
     constructor(
         context: ExtensionContext
     ) {
         super(context);
-
-        this.cmdGeneratePackage = this.lib.extensionData.name + '.generatepackage';
-        this.cmdPrepareDependencyCreateNewExtension = this.lib.extensionData.name + '.preparedependencycreateextension';
-        this.cmdCreateNewExtension = this.lib.extensionData.name + '.createnewextension';
-        this.cmdRestartVscode = this.lib.extensionData.name + '.restartvscode';
-        this.cmdChangeJavaVersions = this.lib.extensionData.name + '.changejavaversions';
-
         this.insertVscodeCommands([
             {
                 command: this.cmdGeneratePackage,
@@ -52,11 +39,6 @@ export class ExtraToolsVscode extends App {
                 callback: this.createNewExtensions,
                 thisArg: this
             },
-            {
-                command: this.cmdRestartVscode,
-                callback: this.restartVscode,
-                thisArg: this
-            },
             { command: this.cmdChangeJavaVersions, callback: this.changeJavaVersions, thisArg: this }
         ]);
         this.insertActivityBar([
@@ -73,10 +55,6 @@ export class ExtraToolsVscode extends App {
                 command: { command: this.cmdCreateNewExtension, title: '' }
             },
             {
-                label: "Restart VSCode",
-                command: { command: this.cmdRestartVscode, title: '' }
-            },
-            {
                 label: "Change Java Versions",
                 command: { command: this.cmdChangeJavaVersions, title: '' }
             }
@@ -89,20 +67,6 @@ export class ExtraToolsVscode extends App {
         // Create and show collapse/expand region statusbar for extension
         LibStatic.createStatusBar({ text: "$(fold-up)", command: "editor.foldRecursively", tooltip: "Collapse Recursive By Cursor" });
         LibStatic.createStatusBar({ text: "$(fold-down)", command: "editor.unfoldRecursively", tooltip: "Expand Recursive By Cursor" });
-    }
-
-    private restartVscode() {
-        switch (LibStatic.getPlatform()) {
-            case PlatformTypeEnum.windows:
-                this.lib.consoleExtend.execOutputChannel(`${this.scripts.windows} -RESTART_VSCODE 1`, undefined, ShellTypeEnum.powershell);
-                break;
-            case PlatformTypeEnum.linux:
-                LibStatic.notify("Not implemented yet!!!", NotifyEnum.warning);
-                break;
-            case PlatformTypeEnum.osx: // TODO: IMPLEMENT TO OSX
-                LibStatic.notify("Not implemented yet!!!", NotifyEnum.warning);
-                break;
-        }
     }
 
     private async createNewExtensions() {
@@ -185,7 +149,7 @@ export class ExtraToolsVscode extends App {
                 if (!selection) {
                     return;
                 } else {
-                    this.lib.consoleExtend.runCommandPowerShellAsAdmin(`${this.scripts.windows} -JAVA_PATH '${selection.detail}'`);
+                    this.lib.consoleExtend.runCommandPowerShellAsAdmin(`${this.scriptsToSystem.windows} -JAVA_PATH '${selection.detail}'`);
                 }
             });
         }

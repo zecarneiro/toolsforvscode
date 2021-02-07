@@ -5,7 +5,8 @@ import { IDisabledExt } from '../interface/profiles-manager-interface';
 import { IProfiles } from '../interface/profiles-manager-interface';
 import { App } from '../app';
 import { ExtensionContext, extensions, QuickPickItem } from 'vscode';
-import { NotifyEnum } from '../utils/enum/lib-enum';
+import { NotifyEnum, PlatformTypeEnum } from '../utils/enum/lib-enum';
+import { ShellTypeEnum } from '../utils/enum/console-extends-enum';
 
 export class ProfilesManager extends App {
     readonly activityBarId = 'tools-vscode-jnoronha-profiles';
@@ -13,10 +14,12 @@ export class ProfilesManager extends App {
     private profilesData: IProfiles[];
 
     // Commands
-    private cmdProfilesManager: string;
-    private cmdInstall: string;
-    private cmdUninstall: string;
-    private cmdShowDefaultProfiles: string;
+    private cmdProfilesManager = this.lib.extensionData.name + '.profilesmanager';
+    private cmdInstall = this.lib.extensionData.name + '.extensionsinstall';
+    private cmdUninstall = this.lib.extensionData.name + '.extensionsuninstall';
+    private cmdReloadVscodeOnProfilesChange = this.lib.extensionData.name + '.reloadvscodeonprofilechange';
+    private cmdShowDefaultProfiles = this.lib.extensionData.name + '.showdefaultprofiles';
+
 
     // CONFIGURATIONS
     private readonly defaultMdProfilesFile = LibStatic.resolvePath<string>(this.filesDir + '/profiles.md');
@@ -35,12 +38,12 @@ export class ProfilesManager extends App {
     ) {
         super(context);
         this.profilesData = [];
-        this.cmdProfilesManager = this.lib.extensionData.name + '.profilesmanager';
-        this.cmdInstall = this.lib.extensionData.name + '.extensionsinstall';
-        this.cmdUninstall = this.lib.extensionData.name + '.extensionsuninstall';
-        this.cmdShowDefaultProfiles = this.lib.extensionData.name + '.showdefaultprofiles';
-
         this.insertVscodeCommands([
+            {
+                command: this.cmdReloadVscodeOnProfilesChange,
+                callback: this.reloadVScode,
+                thisArg: this
+            },
             {
                 command: this.cmdInstall,
                 callback: () => { this.InstallUninstallExt(true); },
@@ -64,6 +67,10 @@ export class ProfilesManager extends App {
         ]);
 
         this.insertActivityBar([
+            {
+                label: "Reload When Profile Change",
+                command: { command: this.cmdReloadVscodeOnProfilesChange, title: '' }
+            },
             {
                 label: "Install Extensions",
                 command: { command: this.cmdInstall, title: '' }
@@ -113,6 +120,20 @@ export class ProfilesManager extends App {
             }
         });
         this.lib.sqliteExtend.file = LibStatic.getVscodeStorageStateFile();
+    }
+
+    private reloadVScode() {
+        switch (LibStatic.getPlatform()) {
+            case PlatformTypeEnum.windows:
+                this.lib.consoleExtend.execOutputChannel(`${this.scriptsToSystem.windows} -RELOAD_VSCODE_CHANGED_PROFILE 1`, undefined, ShellTypeEnum.powershell);
+                break;
+            case PlatformTypeEnum.linux:
+                LibStatic.notify("Not implemented yet!!!", NotifyEnum.warning);
+                break;
+            case PlatformTypeEnum.osx: // TODO: IMPLEMENT TO OSX
+                LibStatic.notify("Not implemented yet!!!", NotifyEnum.warning);
+                break;
+        }
     }
 
     private disableExtensions(profiles: string[]) {

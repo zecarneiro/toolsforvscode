@@ -12,6 +12,10 @@ export abstract class App {
     protected filesDir: string = LibStatic.resolvePath(LibStatic.getExtensionPath(this.context) + '/files');
     protected scriptsDir: string = LibStatic.resolvePath(LibStatic.getExtensionPath(this.context) + '/scripts');
     protected readonly tableStateStorage = 'ItemTable';
+    protected readonly scriptsToSystem = {
+        linux: LibStatic.resolvePath<string>(this.scriptsDir + '/to-linux.sh'),
+        windows: LibStatic.resolvePath<string>(this.scriptsDir + '/to-windows.ps1')
+    };
 
     constructor(
         protected context: ExtensionContext,

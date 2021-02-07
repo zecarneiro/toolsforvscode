@@ -1,9 +1,9 @@
 param(
     $JAVA_PATH,
-    $RESTART_VSCODE
+    $RELOAD_VSCODE_CHANGED_PROFILE
 )
 
-if ($RESTART_VSCODE) {
+if ($RELOAD_VSCODE_CHANGED_PROFILE) {
     & cmd /c start powershell -windowstyle hidden -Command "taskkill /F /IM Code.exe; code"
 }
 
@@ -15,8 +15,9 @@ if ($JAVA_PATH) {
     $oldJava = "$env:JAVA_HOME"
     $path = $path.replace(";$oldJava\bin", "")
 
-    setx JAVA_HOME "$JAVA_PATH"
+    setx /m JAVA_HOME "$JAVA_PATH"
     $path = $path + ";$JAVA_PATH\bin"
     Set-ItemProperty -Path "$sysenv" -Name Path -Value "$path"
+    Stop-Process -ProcessName explorer
 }
 
