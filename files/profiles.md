@@ -25,7 +25,8 @@
             "rpinski.shebang-snippets",
             "IBM.output-colorizer",
             "formulahendry.terminal",
-            "natqe.reload"
+            "natqe.reload",
+            "zhuangtongfa.Material-theme"
         ]
     },
     {
@@ -35,17 +36,16 @@
         ]
     },
     {
-        "name": "UML/Drawio",
-        "data": [
-            "jebbs.plantuml",
-            "hediet.vscode-drawio"
-        ]
-    },
-    {
-        "name": "JSON/Excel",
+        "name": "UML/Drawio/Latex/ASCIIDOC/OpenAPI/JSON/Excel",
         "data": [
             "nickdemayo.vscode-json-editor",
-            "GrapeCity.gc-excelviewer"
+            "GrapeCity.gc-excelviewer",
+            "ajshort.latex-preview",
+            "torn4dom4n.latex-support",
+            "joaompinto.asciidoctor-vscode",
+            "42Crunch.vscode-openapi",
+            "jebbs.plantuml",
+            "hediet.vscode-drawio"
         ]
     },
     {
@@ -53,14 +53,6 @@
         "data": [
             "ms-azuretools.vscode-docker",
             "p1c2u.docker-compose"
-        ]
-    },
-    {
-        "name": "Latex/ASCIIDOC",
-        "data": [
-            "ajshort.latex-preview",
-            "torn4dom4n.latex-support",
-            "joaompinto.asciidoctor-vscode"
         ]
     },
     {
@@ -173,25 +165,25 @@
         "name": "Java",
         "data": [
             "vscjava.vscode-java-pack",
-            "vscjava.vscode-java-debug",
-            "vscjava.vscode-java-dependency",
-            "vscjava.vscode-java-test",
-            "redhat.java",
-            "vscjava.vscode-maven"
+            "redhat.vscode-server-connector",
+            "shengchen.vscode-checkstyle",
+            "faustinoaq.javac-linter",
+            "dgileadi.java-decompiler",
+            "ithildir.java-properties"
         ]
     },
     {
         "name": "C#",
         "data": [
-            "ms-dotnettools.csharp"
+            "ms-dotnettools.csharp",
+            "ms-dotnettools.blazorwasm-companion",
+            "ms-dotnettools.vscode-dotnet-pack"
         ]
     },
     {
         "name": "Spring",
         "data": [
-            "Pivotal.vscode-spring-boot",
-            "vscjava.vscode-spring-initializr",
-            "vscjava.vscode-spring-boot-dashboard"
+            "Pivotal.vscode-boot-dev-pack"
         ]
     }
 ]
