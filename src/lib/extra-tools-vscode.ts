@@ -1,62 +1,66 @@
 import { LibStatic } from './../utils/lib-static';
 import { App } from '../app';
-import { ExtensionContext, QuickPickItem, workspace } from 'vscode';
+import { QuickPickItem, workspace } from 'vscode';
 import { IProcessing } from '../utils/interface/lib-interface';
 import { ShellTypeEnum } from '../utils/enum/console-extends-enum';
+import { Lib } from '../utils/lib';
 
 export class ExtraToolsVscode extends App {
-    // Commands
-    private cmdGeneratePackage = this.lib.extensionData.name + '.generatepackage';
-    private cmdPrepareDependencyCreateNewExtension = this.lib.extensionData.name + '.preparedependencycreateextension';
-    private cmdCreateNewExtension = this.lib.extensionData.name + '.createnewextension';
-    private cmdChangeJavaVersions = this.lib.extensionData.name + '.changejavaversions';
-
-    // Others
+    static readonly className = 'ExtraToolsVscode';
     readonly activityBarId = 'tools-vscode-jnoronha-tools';
 
     constructor(
-        context: ExtensionContext
+        lib: Lib
     ) {
-        super(context);
-        this.insertVscodeCommands([
+        super(lib, ExtraToolsVscode.className);
+        this.prepareAll([
             {
-                command: this.cmdGeneratePackage,
-                callback: this.generateVsixPackages,
-                thisArg: this
-            },
-            {
-                command: this.cmdPrepareDependencyCreateNewExtension,
-                callback: () => {
-                    this.lib.consoleExtend.execTerminal('npm install -g yo', undefined, ShellTypeEnum.system);
-                    this.lib.consoleExtend.execTerminal('npm install -g typescript', undefined, ShellTypeEnum.system);
-                    this.lib.consoleExtend.execTerminal('npm install -g yo generator-code', undefined, ShellTypeEnum.system);
-                    this.lib.consoleExtend.execTerminal('npm install -g vsce', undefined, ShellTypeEnum.system);
+                treeItem: {
+                    label: "Generate VSIX",
+                    command: { command: this.getCommand('generatepackage'), title: "" }
                 },
-                thisArg: this
+                callback: {
+                    caller: this.generateVsixPackages,
+                    isSync: true,
+                    thisArg: this
+                }
             },
             {
-                command: this.cmdCreateNewExtension,
-                callback: this.createNewExtensions,
-                thisArg: this
-            },
-            { command: this.cmdChangeJavaVersions, callback: this.changeJavaVersions, thisArg: this }
-        ]);
-        this.insertActivityBar([
-            {
-                label: "Generate VSIX",
-                command: { command: this.cmdGeneratePackage, title: '' }
-            },
-            {
-                label: "Create Ext: Prepare Dependencies",
-                command: { command: this.cmdPrepareDependencyCreateNewExtension, title: '' }
-            },
-            {
-                label: "Create Extension",
-                command: { command: this.cmdCreateNewExtension, title: '' }
+                treeItem: {
+                    label: "Create Ext: Prepare Dependencies",
+                    command: { command: this.getCommand('preparedependencycreateextension'), title: '' }
+                },
+                callback: {
+                    caller: () => {
+                        this.lib.consoleExtend.execTerminal('npm install -g yo', undefined, ShellTypeEnum.system);
+                        this.lib.consoleExtend.execTerminal('npm install -g typescript', undefined, ShellTypeEnum.system);
+                        this.lib.consoleExtend.execTerminal('npm install -g yo generator-code', undefined, ShellTypeEnum.system);
+                        this.lib.consoleExtend.execTerminal('npm install -g vsce', undefined, ShellTypeEnum.system);
+                    },
+                    isSync: true,
+                    thisArg: this
+                }
             },
             {
-                label: "Change Java Versions",
-                command: { command: this.cmdChangeJavaVersions, title: '' }
+                treeItem: {
+                    label: "Create Extension",
+                    command: { command: this.getCommand('createnewextension'), title: '' }
+                },
+                callback: {
+                    caller: this.createNewExtensions,
+                    thisArg: this
+                }
+            },
+            {
+                treeItem: {
+                    label: "Change Java Versions",
+                    command: { command: this.getCommand('changejavaversions'), title: '' }
+                },
+                callback: {
+                    caller: this.changeJavaVersions,
+                    isSync: true,
+                    thisArg: this
+                }
             }
         ]);
 
@@ -124,7 +128,7 @@ export class ExtraToolsVscode extends App {
             }
 
             processing = LibStatic.showProcessing("Create package", this.lib.consoleExtend.outputChannel);
-            this.lib.consoleExtend.execOutputChannel('vsce package', workspaceDir);
+            this.lib.consoleExtend.execOutputChannel('vsce package', { cwd: workspaceDir });
             processing.disable();
             this.lib.consoleExtend.onOutputChannel("Done");
         }

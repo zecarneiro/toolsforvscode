@@ -4,21 +4,19 @@ import { ProfileManagerMsgEnum } from '../enum/profiles-manager-enum';
 import { IDisabledExt } from '../interface/profiles-manager-interface';
 import { IProfiles } from '../interface/profiles-manager-interface';
 import { App } from '../app';
-import { ExtensionContext, extensions, QuickPickItem } from 'vscode';
+import { extensions, QuickPickItem } from 'vscode';
 import { NotifyEnum, PlatformTypeEnum } from '../utils/enum/lib-enum';
 import { ShellTypeEnum } from '../utils/enum/console-extends-enum';
+import { Lib } from '../utils/lib';
 
 export class ProfilesManager extends App {
+    static readonly className = 'ProfilesManager';
     readonly activityBarId = 'tools-vscode-jnoronha-profiles';
 
     private profilesData: IProfiles[];
 
     // Commands
-    private cmdProfilesManager = this.lib.extensionData.name + '.profilesmanager';
-    private cmdInstall = this.lib.extensionData.name + '.extensionsinstall';
-    private cmdUninstall = this.lib.extensionData.name + '.extensionsuninstall';
-    private cmdReloadVscodeOnProfilesChange = this.lib.extensionData.name + '.reloadvscodeonprofilechange';
-    private cmdShowDefaultProfiles = this.lib.extensionData.name + '.showdefaultprofiles';
+    private cmdProfilesManager: string;
 
 
     // CONFIGURATIONS
@@ -34,63 +32,78 @@ export class ProfilesManager extends App {
     };
 
     constructor(
-        context: ExtensionContext
+        lib: Lib
     ) {
-        super(context);
+        super(lib, ProfilesManager.className);
         this.profilesData = [];
-        this.insertVscodeCommands([
+        this.cmdProfilesManager = this.getCommand('profilesmanager');
+
+        this.prepareAll([
             {
-                command: this.cmdReloadVscodeOnProfilesChange,
-                callback: this.reloadVScode,
-                thisArg: this
+                treeItem: {
+                    label: "Reload When Profile Change",
+                    command: { command: this.getCommand('reloadvscodeonprofilechange'), title: "" }
+                },
+                callback: {
+                    caller: this.reloadVScode,
+                    isSync: true,
+                    thisArg: this
+                }
             },
             {
-                command: this.cmdInstall,
-                callback: () => { this.InstallUninstallExt(true); },
-                thisArg: this
+                treeItem: {
+                    label: "Install Extensions",
+                    command: { command: this.getCommand('extensionsinstall'), title: '' }
+                },
+                callback: {
+                    caller: this.InstallUninstallExt,
+                    args: [true],
+                    isSync: true,
+                    thisArg: this
+                }
             },
             {
-                command: this.cmdUninstall,
-                callback: () => { this.InstallUninstallExt(false); },
-                thisArg: this
+                treeItem: {
+                    label: "Uninstall Extensions",
+                    command: { command: this.getCommand('extensionsuninstall'), title: '' }
+                },
+                callback: {
+                    caller: this.InstallUninstallExt,
+                    args: [false],
+                    isSync: true,
+                    thisArg: this
+                }
             },
             {
-                command: this.cmdProfilesManager,
-                callback: this.createMenu,
-                thisArg: this
-            },
-            {
-                command: this.cmdShowDefaultProfiles,
-                callback: () => { LibStatic.showFilesMD(this.defaultMdProfilesFile); },
-                thisArg: this
+                treeItem: {
+                    label: "Show My Default Extensions",
+                    command: { command: this.getCommand('showdefaultprofiles'), title: '' }
+                },
+                callback: {
+                    caller: LibStatic.showFilesMD,
+                    args: [this.defaultMdProfilesFile],
+                    isSync: true,
+                    thisArg: this
+                }
             }
         ]);
-
-        this.insertActivityBar([
+        this.lib.registerVscodeCommand([
             {
-                label: "Reload When Profile Change",
-                command: { command: this.cmdReloadVscodeOnProfilesChange, title: '' }
+                command: this.cmdProfilesManager,
+                callback: {
+                    caller: this.createMenu,
+                    isSync: true,
+                    thisArg: this
+                }
             },
-            {
-                label: "Install Extensions",
-                command: { command: this.cmdInstall, title: '' }
-            },
-            {
-                label: "Uninstall Extensions",
-                command: { command: this.cmdUninstall, title: '' }
-            },
-            {
-                label: "Show My Default Extensions",
-                command: { command: this.cmdShowDefaultProfiles, title: '' }
-            }
         ]);
         LibStatic.createStatusBar({ text: 'Profiles Manager', command: this.cmdProfilesManager });
 
         // Functions
-        this.prepareAll();
+        this.prepareProfiles();
     }
 
-    private prepareAll() {
+    private prepareProfiles() {
         let profileConfig = this.lib.extensionData.configData[this.config] as IProfiles[];
         profileConfig.forEach(profile => {
             let toIsert = true;
@@ -125,13 +138,15 @@ export class ProfilesManager extends App {
     private reloadVScode() {
         switch (LibStatic.getPlatform()) {
             case PlatformTypeEnum.windows:
-                this.lib.consoleExtend.execOutputChannel(`${this.scriptsToSystem.windows} -RELOAD_VSCODE_CHANGED_PROFILE 1`, undefined, ShellTypeEnum.powershell);
+                this.lib.consoleExtend.execOutputChannel(`${this.scriptsToSystem.windows} -RELOAD_VSCODE_CHANGED_PROFILE 1`, {
+                    shell: this.lib.consoleExtend.getShell(ShellTypeEnum.powershell).command
+                });
                 break;
             case PlatformTypeEnum.linux:
-                LibStatic.notify("Not implemented yet!!!", NotifyEnum.warning);
+                this.printMessages("Not implemented yet!!!", false, NotifyEnum.warning);
                 break;
             case PlatformTypeEnum.osx: // TODO: IMPLEMENT TO OSX
-                LibStatic.notify("Not implemented yet!!!", NotifyEnum.warning);
+                this.printMessages("Not implemented yet!!!", false, NotifyEnum.warning);
                 break;
         }
     }
@@ -156,7 +171,7 @@ export class ProfilesManager extends App {
         if (toDisable.length === 0) {
             this.lib.sqliteExtend.exec(this.sqlDisableExt.enableAll, (result) => {
                 if (result.error) {
-                    LibStatic.notify(result.error, NotifyEnum.error);
+                    this.printMessages(result.error, false, NotifyEnum.error);
                 } else {
                     LibStatic.notify(ProfileManagerMsgEnum.EXTENSIONS_DISABLED_ENABLED);
                 }
@@ -166,7 +181,7 @@ export class ProfilesManager extends App {
         else {
             this.lib.sqliteExtend.exec(this.sqlDisableExt.getAll, (result) => {
                 if (result.error) {
-                    LibStatic.notify(result.error, NotifyEnum.error);
+                    this.printMessages(result.error, false, NotifyEnum.error);
                 } else {
                     const value = LibStatic.stringToJson(toDisable, true);
 
@@ -175,9 +190,9 @@ export class ProfilesManager extends App {
                         let sql = LibStatic.stringReplaceAll(this.sqlDisableExt.update, [{ search: '{0}', toReplace: value }]);
                         this.lib.sqliteExtend.exec(sql, (result) => {
                             if (result.error) {
-                                LibStatic.notify(result.error, NotifyEnum.error);
+                                this.printMessages(result.error, false, NotifyEnum.error);
                             } else {
-                                LibStatic.notify(ProfileManagerMsgEnum.EXTENSIONS_DISABLED_ENABLED);
+                                this.printMessages(ProfileManagerMsgEnum.EXTENSIONS_DISABLED_ENABLED, false);
                             }
                         });
                     }
@@ -186,9 +201,9 @@ export class ProfilesManager extends App {
                         let sql = LibStatic.stringReplaceAll(this.sqlDisableExt.insert, [{ search: '{0}', toReplace: value }]);
                         this.lib.sqliteExtend.exec(sql, (result) => {
                             if (result.error) {
-                                LibStatic.notify(result.error, NotifyEnum.error);
+                                this.printMessages(result.error, false, NotifyEnum.error);
                             } else {
-                                LibStatic.notify(ProfileManagerMsgEnum.EXTENSIONS_DISABLED_ENABLED);
+                                this.printMessages(ProfileManagerMsgEnum.EXTENSIONS_DISABLED_ENABLED, false);
                             }
                         });
                     }
@@ -200,7 +215,7 @@ export class ProfilesManager extends App {
     private createMenu() {
         this.lib.sqliteExtend.exec(this.sqlDisableExt.getAll, (result) => {
             if (result.error) {
-                LibStatic.notify(result.error, NotifyEnum.error);
+                this.printMessages(result.error, false, NotifyEnum.error);
             } else {
                 let extensionsDisabled: IStatusStorageDb[] = result.data as IStatusStorageDb[];
                 let extensionsDisabledData: IDisabledExt[] = [];
@@ -238,6 +253,8 @@ export class ProfilesManager extends App {
                         return;
                     } else {
                         let profile: string[] = [];
+
+                        this.printMessages("Processing...", false);
                         profile = selection.map(x => x.label);
                         this.disableExtensions(profile);
                     }

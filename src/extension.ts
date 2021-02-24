@@ -1,17 +1,25 @@
+import { LibStatic } from './utils/lib-static';
 import { ExtraToolsVscode } from './lib/extra-tools-vscode';
 import { ProfilesManager } from './lib/profiles-manager';
 import * as vscode from 'vscode';
+import { Lib } from './utils/lib';
+import { App } from './app';
+import { NotifyEnum } from './utils/enum/lib-enum';
 
-let profilesManager: ProfilesManager;
-let extraToolsVscode: ExtraToolsVscode;
+let lib: Lib;
+let profilesManager: ProfilesManager | null;
+let extraToolsVscode: ExtraToolsVscode | null;
 
 
 export function activate(context: vscode.ExtensionContext) {
 	try {
-		profilesManager = new ProfilesManager(context);
-		extraToolsVscode = new ExtraToolsVscode(context);
+		lib = new Lib(context, App.id, App.extensionName);
+		profilesManager = new ProfilesManager(lib);
+		extraToolsVscode = new ExtraToolsVscode(lib);
 	} catch (error) {
-		console.error(error);
+		profilesManager = null;
+		extraToolsVscode = null;
+		LibStatic.notify(error, NotifyEnum.error);
 	}
 }
 

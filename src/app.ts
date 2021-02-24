@@ -1,38 +1,46 @@
-import { ExtensionContext, TreeItem } from "vscode";
-import { IActivityBarProvider } from "./utils/interface/activity-bar-provider-interface";
-import { IRegVsCmd } from "./utils/interface/lib-interface";
+import { NotifyEnum } from "./utils/enum/lib-enum";
+import { ITreeItemExtend, ITreeItemWithChildren } from "./utils/interface/lib-interface";
 import { Lib } from "./utils/lib";
 import { LibStatic } from "./utils/lib-static";
 
 export abstract class App {
     static readonly id = 'jnoronha.toolsforvscode';
+    static readonly extensionName = 'Tools For VSCode';
     abstract readonly activityBarId: string;
 
-    protected lib: Lib;
-    protected filesDir: string = LibStatic.resolvePath(LibStatic.getExtensionPath(this.context) + '/files');
-    protected scriptsDir: string = LibStatic.resolvePath(LibStatic.getExtensionPath(this.context) + '/scripts');
+    protected filesDir: string;
+    protected scriptsDir: string;
     protected readonly tableStateStorage = 'ItemTable';
-    protected readonly scriptsToSystem = {
-        linux: LibStatic.resolvePath<string>(this.scriptsDir + '/to-linux.sh'),
-        windows: LibStatic.resolvePath<string>(this.scriptsDir + '/to-windows.ps1')
+    protected scriptsToSystem = {
+        linux: '',
+        windows: ''
     };
 
     constructor(
-        protected context: ExtensionContext,
+        protected lib: Lib,
+        private objectName: string
     ) {
-        this.lib = new Lib(this.context, App.id);
+        this.filesDir = LibStatic.resolvePath<string>(lib.getExtensionPath() + '/files');
+        this.scriptsDir = LibStatic.resolvePath<string>(lib.getExtensionPath() + '/scripts');
+        this.scriptsToSystem.linux = LibStatic.resolvePath<string>(this.scriptsDir + '/to-linux.sh');
+        this.scriptsToSystem.windows = LibStatic.resolvePath<string>(this.scriptsDir + '/to-windows.ps1');
     }
 
-    protected insertVscodeCommands(commands: IRegVsCmd[] | IRegVsCmd) {
-        if (commands instanceof Array) {
-            this.lib.registerVscodeCommand(commands);
+    protected prepareAll(dataTreeItemVscodeCmd: ITreeItemWithChildren[] | ITreeItemExtend[]) {
+        this.lib.createActivityBar(dataTreeItemVscodeCmd, this.activityBarId);
+    }
+
+    protected printMessages(data: any, isOutputChannel: boolean, type?: NotifyEnum) {
+        if (isOutputChannel) {
+            this.lib.consoleExtend.onOutputChannel(data);
         } else {
-            this.lib.registerVscodeCommand([commands]);
+            LibStatic.notify(`${App.extensionName}-${this.objectName}: ${data}`, type);
         }
     }
 
-    protected insertActivityBar(data: IActivityBarProvider[] | TreeItem[]) {
-        LibStatic.createActivityBar(data, this.activityBarId, true);
+    protected getCommand(name: string): string {
+        name = `${this.objectName}${name}`;
+        return this.lib.getCommandFormated(name);
     }
 
     closeSshConnection() {

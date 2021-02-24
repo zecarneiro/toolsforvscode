@@ -6,7 +6,7 @@
 	"name": "toolsforvscode",
 	"displayName": "Tools for VSCode",
 	"description": "Collapse, Expand, Reload and Enable, Disable, Install and Uninstall Extensions",
-	"version": "2.1.5",
+	"version": "2.2.0",
 	"engines": {
 		"vscode": "^1.46.0"
 	},
