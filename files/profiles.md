@@ -3,26 +3,19 @@
 ```json
 [
     {
-        "name": "No Disable",
+        "name": "VSCode",
         "data": [
             "gruntfuggly.todo-tree",
             "vscode-icons-team.vscode-icons",
             "CoenraadS.bracket-pair-colorizer",
-            "christian-kohler.path-intellisense",
             "alefragnani.project-manager",
-            "ms-vscode-remote.remote-wsl",
             "ms-vsliveshare.vsliveshare",
             "alefragnani.Bookmarks",
             "SirTori.indenticator",
-            "aaron-bond.better-comments",
             "nobuhito.printcode",
-            "VisualStudioExptTeam.vscodeintellicode",
             "naumovs.color-highlight",
-            "chrmarti.regex",
-            "liximomo.sftp",
             "wayou.vscode-todo-highlight",
             "akmarnafi.comment-headers",
-            "rpinski.shebang-snippets",
             "IBM.output-colorizer",
             "formulahendry.terminal",
             "natqe.reload",
@@ -30,10 +23,33 @@
         ]
     },
     {
-        "name": "Git",
+        "name": "Generic Language",
         "data": [
-            "eamodio.gitlens"
+            "christian-kohler.path-intellisense",
+            "aaron-bond.better-comments",
+            "VisualStudioExptTeam.vscodeintellicode",
+            "rpinski.shebang-snippets"
         ]
+    },
+    {
+        "name": "WSL",
+        "data": ["ms-vscode-remote.remote-wsl"]
+    },
+    {
+        "name": "Regex",
+        "data": ["chrmarti.regex"]
+    },
+    {
+        "name": "Server Connection",
+        "data": ["liximomo.sftp"]
+    },
+    {
+        "name": "CI/CD",
+        "data": ["pivotal.vscode-concourse"]
+    },
+    {
+        "name": "Git",
+        "data": ["eamodio.gitlens"]
     },
     {
         "name": "UML/Drawio/Latex/ASCIIDOC/OpenAPI/JSON/Excel",
@@ -42,6 +58,7 @@
             "GrapeCity.gc-excelviewer",
             "ajshort.latex-preview",
             "torn4dom4n.latex-support",
+            "asciidoctor.asciidoctor-vscode",
             "joaompinto.asciidoctor-vscode",
             "42Crunch.vscode-openapi",
             "jebbs.plantuml",
@@ -70,10 +87,8 @@
         ]
     },
     {
-        "name": "Vue",
-        "data": [
-            "octref.vetur"
-        ]
+        "name": "VueJS",
+        "data": ["octref.vetur"]
     },
     {
         "name": "Python",
@@ -134,9 +149,7 @@
     },
     {
         "name": "Power Shell",
-        "data": [
-            "ms-vscode.powershell"
-        ]
+        "data": ["ms-vscode.powershell"]
     },
     {
         "name": "XML/HTML",
@@ -150,7 +163,6 @@
             "redhat.vscode-yaml",
             "formulahendry.auto-rename-tag",
             "fabianlauer.vs-code-xml-format",
-            "Pivotal.vscode-concourse",
             "Pivotal.vscode-manifest-yaml"
         ]
     },
@@ -162,27 +174,44 @@
         ]
     },
     {
+        "name": "C#",
+        "data": ["ms-dotnettools.csharp"]
+    },
+    {
+        "name": "F#",
+        "data": ["ionide.ionide-fsharp"]
+    },
+    {
+        "name": ".NET",
+        "data": [
+            "ms-dotnettools.dotnet-interactive-vscode",
+            "ms-dotnettools.blazorwasm-companion",
+            "ms-dotnettools.vscode-dotnet-sdk",
+            "ms-dotnettools.vscode-dotnet-runtime",
+            "ms-dotnettools.vscode-dotnet-pack"
+        ]
+    },
+    {
         "name": "Java",
         "data": [
+            "redhat.java",
+            "vscjava.vscode-java-debug",
+            "vscjava.vscode-java-test",
+            "vscjava.vscode-maven",
+            "vscjava.vscode-java-dependency",
             "vscjava.vscode-java-pack",
             "redhat.vscode-server-connector",
             "shengchen.vscode-checkstyle",
             "faustinoaq.javac-linter",
             "dgileadi.java-decompiler",
-            "ithildir.java-properties"
-        ]
-    },
-    {
-        "name": "C#",
-        "data": [
-            "ms-dotnettools.csharp",
-            "ms-dotnettools.blazorwasm-companion",
-            "ms-dotnettools.vscode-dotnet-pack"
+            "ithildir.java-properties",
+            "sohibe.java-generate-setters-getters"
         ]
     },
     {
         "name": "Spring",
         "data": [
+            "pivotal.vscode-spring-boot",
             "Pivotal.vscode-boot-dev-pack"
         ]
     }
