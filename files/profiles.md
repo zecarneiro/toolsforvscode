@@ -23,12 +23,23 @@
         ]
     },
     {
-        "name": "Generic Language",
+        "name": "Generic",
         "data": [
             "christian-kohler.path-intellisense",
             "aaron-bond.better-comments",
             "VisualStudioExptTeam.vscodeintellicode",
-            "rpinski.shebang-snippets"
+            "rpinski.shebang-snippets",
+            "quicktype.quicktype",
+            "SonarSource.sonarlint-vscode",
+            "SonatypeCommunity.vscode-iq-plugin",
+            "chrmarti.regex"
+        ]
+    },
+    {
+        "name": "Git/CI-CD",
+        "data": [
+            "eamodio.gitlens",
+            "pivotal.vscode-concourse"
         ]
     },
     {
@@ -36,31 +47,24 @@
         "data": ["ms-vscode-remote.remote-wsl"]
     },
     {
-        "name": "Regex",
-        "data": ["chrmarti.regex"]
-    },
-    {
         "name": "Server Connection",
         "data": ["liximomo.sftp"]
     },
     {
-        "name": "CI/CD",
-        "data": ["pivotal.vscode-concourse"]
-    },
-    {
-        "name": "Git",
-        "data": ["eamodio.gitlens"]
-    },
-    {
-        "name": "UML/Drawio/Latex/ASCIIDOC/OpenAPI/JSON/Excel",
+        "name": "Latex/ASCIIDOC/OpenAPI/JSON",
         "data": [
             "nickdemayo.vscode-json-editor",
-            "GrapeCity.gc-excelviewer",
             "ajshort.latex-preview",
             "torn4dom4n.latex-support",
             "asciidoctor.asciidoctor-vscode",
             "joaompinto.asciidoctor-vscode",
-            "42Crunch.vscode-openapi",
+            "42Crunch.vscode-openapi"
+        ]
+    },
+    {
+        "name": "UML/Drawio/Excel",
+        "data": [
+            "GrapeCity.gc-excelviewer",
             "jebbs.plantuml",
             "hediet.vscode-drawio"
         ]
@@ -174,12 +178,17 @@
         ]
     },
     {
-        "name": "C#",
-        "data": ["ms-dotnettools.csharp"]
-    },
-    {
-        "name": "F#",
-        "data": ["ionide.ionide-fsharp"]
+        "name": "C#/F#",
+        "data": [
+            "ms-dotnettools.csharp",
+            "ionide.ionide-fsharp",
+            "Fudge.auto-using",
+            "craigthomas.supersharp",
+            "adrianwilczynski.namespace",
+            "tdallau-csharpextensions.csharpextensions",
+            "FraserCrosbie.csharp-model-to-builder",
+            "RichardZampieriprog.csharp-snippet-productivity"
+        ]
     },
     {
         "name": ".NET",
@@ -188,7 +197,11 @@
             "ms-dotnettools.blazorwasm-companion",
             "ms-dotnettools.vscode-dotnet-sdk",
             "ms-dotnettools.vscode-dotnet-runtime",
-            "ms-dotnettools.vscode-dotnet-pack"
+            "ms-dotnettools.vscode-dotnet-pack",
+            "formulahendry.dotnet-test-explorer",
+            "formulahendry.dotnet",
+            "leo-labs.dotnet",
+            "adrianwilczynski.add-reference"
         ]
     },
     {
