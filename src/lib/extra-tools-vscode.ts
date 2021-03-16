@@ -128,9 +128,9 @@ export class ExtraToolsVscode extends App {
             }
 
             processing = LibStatic.showProcessing("Create package", this.lib.consoleExtend.outputChannel);
-            this.lib.consoleExtend.execOutputChannel('vsce package', { cwd: workspaceDir });
+            this.lib.consoleExtend.execOutputChannel('vsce package', { cwd: workspaceDir, shell: this.lib.consoleExtend.getShell(ShellTypeEnum.bash).command });
             processing.disable();
-            this.lib.consoleExtend.onOutputChannel("Done");
+            this.lib.consoleExtend.onOutputChannel("Done", {isNewLine: true});
         }
     }
 

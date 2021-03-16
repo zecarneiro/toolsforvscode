@@ -41,6 +41,17 @@ export class ProfilesManager extends App {
         this.prepareAll([
             {
                 treeItem: {
+                    label: "Activate All Extensions",
+                    command: { command: this.getCommand('activeallextensions'), title: "" }
+                },
+                callback: {
+                    caller: this.enableAllExtensions,
+                    isSync: true,
+                    thisArg: this
+                }
+            },
+            {
+                treeItem: {
                     label: "Reload When Profile Change",
                     command: { command: this.getCommand('reloadvscodeonprofilechange'), title: "" }
                 },
@@ -105,33 +116,9 @@ export class ProfilesManager extends App {
 
     private prepareProfiles() {
         let profileConfig = this.lib.extensionData.configData[this.config] as IProfiles[];
-        profileConfig.forEach(profile => {
-            let toIsert = true;
-            if (profile.name && profile.data && profile.name.length > 0 && profile.data.length > 0) {
-                if (this.profilesData.length <= 0) {
-                    toIsert = true;
-                } else if (this.profilesData.findIndex(value => value.name === profile.name) !== -1) {
-                    const msg = LibStatic.stringReplaceAll(ProfileManagerMsgEnum.PROFILE_EXISTS, [{ search: '{0}', toReplace: profile.name }]);
-                    toIsert = false;
-                    this.lib.consoleExtend.onOutputChannel(msg, { title: this.prepareAll.name, isNewLine: true });
-                } else {
-                    for (const key in profile.data) {
-                        if (this.profilesData.findIndex(x => x.data.indexOf(profile.data[key]) >= 0) !== -1) {
-                            const msg = LibStatic.stringReplaceAll(ProfileManagerMsgEnum.PROFILE_EXISTS, [{ search: '{0}', toReplace: profile.data[key] }]);
-                            toIsert = false;
-                            this.lib.consoleExtend.onOutputChannel(msg, { title: this.prepareAll.name, isNewLine: true });
-                            break;
-                        }
-                    }
-                }
-            } else {
-                toIsert = false;
-            }
-
-            if (toIsert) {
-                this.profilesData.push(profile);
-            }
-        });
+        if (profileConfig && profileConfig.length > 0) {
+            this.profilesData = LibStatic.copyJsonData(profileConfig);
+        }
         this.lib.sqliteExtend.file = LibStatic.getVscodeStorageStateFile();
     }
 
@@ -149,6 +136,16 @@ export class ProfilesManager extends App {
                 this.printMessages("Not implemented yet!!!", false, NotifyEnum.warning);
                 break;
         }
+    }
+
+    private enableAllExtensions() {
+        this.lib.sqliteExtend.exec(this.sqlDisableExt.enableAll, (result) => {
+            if (result.error) {
+                this.printMessages(result.error, false, NotifyEnum.error);
+            } else {
+                LibStatic.notify(ProfileManagerMsgEnum.EXTENSIONS_DISABLED_ENABLED);
+            }
+        });
     }
 
     private disableExtensions(profiles: string[]) {
@@ -169,17 +166,11 @@ export class ProfilesManager extends App {
 
         // Enable All Extensions
         if (toDisable.length === 0) {
-            this.lib.sqliteExtend.exec(this.sqlDisableExt.enableAll, (result) => {
-                if (result.error) {
-                    this.printMessages(result.error, false, NotifyEnum.error);
-                } else {
-                    LibStatic.notify(ProfileManagerMsgEnum.EXTENSIONS_DISABLED_ENABLED);
-                }
-            });
+            this.enableAllExtensions();
         }
         // Disable extensions
         else {
-            this.lib.sqliteExtend.exec(this.sqlDisableExt.getAll, (result) => {
+            this.lib.sqliteExtend. exec(this.sqlDisableExt.getAll, (result) => {
                 if (result.error) {
                     this.printMessages(result.error, false, NotifyEnum.error);
                 } else {
@@ -188,9 +179,9 @@ export class ProfilesManager extends App {
                     // If already exist disabled extension(s)
                     if (result.data) {
                         let sql = LibStatic.stringReplaceAll(this.sqlDisableExt.update, [{ search: '{0}', toReplace: value }]);
-                        this.lib.sqliteExtend.exec(sql, (result) => {
-                            if (result.error) {
-                                this.printMessages(result.error, false, NotifyEnum.error);
+                        this.lib.sqliteExtend.exec(sql, (sqlResult) => {
+                            if (sqlResult.error) {
+                                this.printMessages(sqlResult.error, false, NotifyEnum.error);
                             } else {
                                 this.printMessages(ProfileManagerMsgEnum.EXTENSIONS_DISABLED_ENABLED, false);
                             }
@@ -199,9 +190,9 @@ export class ProfilesManager extends App {
                     // If not exist disabled extension(s)
                     else {
                         let sql = LibStatic.stringReplaceAll(this.sqlDisableExt.insert, [{ search: '{0}', toReplace: value }]);
-                        this.lib.sqliteExtend.exec(sql, (result) => {
-                            if (result.error) {
-                                this.printMessages(result.error, false, NotifyEnum.error);
+                        this.lib.sqliteExtend.exec(sql, (sqlResult) => {
+                            if (sqlResult.error) {
+                                this.printMessages(sqlResult.error, false, NotifyEnum.error);
                             } else {
                                 this.printMessages(ProfileManagerMsgEnum.EXTENSIONS_DISABLED_ENABLED, false);
                             }
@@ -213,11 +204,12 @@ export class ProfilesManager extends App {
     }
 
     private createMenu() {
-        this.lib.sqliteExtend.exec(this.sqlDisableExt.getAll, (result) => {
+        this.lib.sqliteExtend.exec<IStatusStorageDb[]>(this.sqlDisableExt.getAll, (result) => {
             if (result.error) {
                 this.printMessages(result.error, false, NotifyEnum.error);
             } else {
-                let extensionsDisabled: IStatusStorageDb[] = result.data as IStatusStorageDb[];
+                
+                let extensionsDisabled: IStatusStorageDb[] = result.data ? result.data : [];
                 let extensionsDisabledData: IDisabledExt[] = [];
                 let items: QuickPickItem[] = [];
 
@@ -238,7 +230,7 @@ export class ProfilesManager extends App {
                     for (const extId in element.data) {
                         if (
                             extensionsDisabledData.findIndex(x => x.id === element.data[extId]) !== -1
-                            || !extensions.getExtension(element.data[extId])
+                            || !LibStatic.isExtensionInstalled(element.data[extId])
                         ) {
                             isPicked = false;
                             break;
@@ -261,7 +253,7 @@ export class ProfilesManager extends App {
                 });
             }
         });
-    };
+    }
 
     /*******************************************************
      * Install/Uninstall Area
