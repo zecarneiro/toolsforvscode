@@ -215,7 +215,6 @@
             "vscjava.vscode-java-pack",
             "redhat.vscode-server-connector",
             "shengchen.vscode-checkstyle",
-            "faustinoaq.javac-linter",
             "dgileadi.java-decompiler",
             "ithildir.java-properties",
             "sohibe.java-generate-setters-getters"
