@@ -6,7 +6,7 @@
 	"name": "toolsforvscode",
 	"displayName": "Tools for VSCode",
 	"description": "Collapse, Expand, Reload and Enable, Disable, Install and Uninstall Extensions",
-	"version": "2.2.0",
+	"version": "2.2.1",
 	"engines": {
 		"vscode": "^1.46.0"
 	},
@@ -60,14 +60,13 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run package",
-		"compile": "npm run delete:dist && tsc -p ./ && npm run prepare:utils",
-		"package": "npm run delete:dist && npm run prepare:utils && webpack --mode production --devtool hidden-source-map --config ./build/node-extension.webpack.config.js",
+		"compile": "npm run pre:build && tsc -p ./",
+		"package": "npm run pre:build && webpack --mode production --devtool hidden-source-map --config ./build/node-extension.webpack.config.js",
 		"lint": "eslint src --ext ts",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile && npm run lint",
 		"test": "node ./out/test/runTest.js",
-		"prepare:utils": "bash -c \"./src/utils/scripts/prepare-utils.sh \"$PWD\" \"$PWD/src/utils\"\"",
-		"delete:dist": "bash -c \"if test -d \"./dist\"; then rm -rf \"./dist\"; fi"
+		"pre:build": "node ./scripts/prepare-to-build.js"
 	},
 	"devDependencies": {
 		"@types/fs-extra": "^9.0.6",
