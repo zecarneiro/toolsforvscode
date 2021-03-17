@@ -217,7 +217,11 @@
             "shengchen.vscode-checkstyle",
             "dgileadi.java-decompiler",
             "ithildir.java-properties",
-            "sohibe.java-generate-setters-getters"
+            "sohibe.java-generate-setters-getters",
+            "redhat.vscode-microprofile",
+            "microprofile-community.mp-starter-vscode-ext",
+            "microprofile-community.mp-rest-client-generator-vscode-ext",
+            "redhat.vscode-quarkus"
         ]
     },
     {
