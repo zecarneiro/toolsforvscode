@@ -55,7 +55,6 @@
         "name": "Latex/ASCIIDOC/OpenAPI/JSON",
         "data": [
             "nickdemayo.vscode-json-editor",
-            "ajshort.latex-preview",
             "torn4dom4n.latex-support",
             "asciidoctor.asciidoctor-vscode",
             "joaompinto.asciidoctor-vscode",
