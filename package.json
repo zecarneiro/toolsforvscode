@@ -6,7 +6,7 @@
 	"name": "toolsforvscode",
 	"displayName": "Tools for VSCode",
 	"description": "Collapse, Expand, Reload and Enable, Disable, Install and Uninstall Extensions",
-	"version": "2.2.1",
+	"version": "2.3.0",
 	"engines": {
 		"vscode": "^1.46.0"
 	},
@@ -48,12 +48,20 @@
 		"views": {
 			"tools-vscode-jnoronha": [
 				{
-					"id": "tools-vscode-jnoronha-tools",
-					"name": "Tools"
+					"id": "profiles-manager-tools-jnoronha",
+					"name": "Profiles Manager"
 				},
 				{
-					"id": "tools-vscode-jnoronha-profiles",
-					"name": "Profiles"
+					"id": "vscode-tools-jnoronha",
+					"name": "VSCode"
+				},
+				{
+					"id": "nodejs-tools-jnoronha",
+					"name": "NodeJS"
+				},
+				{
+					"id": "others-tools-jnoronha",
+					"name": "Others"
 				}
 			]
 		}

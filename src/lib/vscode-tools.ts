@@ -1,27 +1,26 @@
-import { LibStatic } from './../utils/lib-static';
+import { LibStatic } from '../utils/lib-static';
 import { App } from '../app';
-import { QuickPickItem, workspace } from 'vscode';
+import { workspace } from 'vscode';
 import { IProcessing } from '../utils/interface/lib-interface';
 import { ShellTypeEnum } from '../utils/enum/console-extends-enum';
 import { Lib } from '../utils/lib';
 
-export class ExtraToolsVscode extends App {
-    static readonly className = 'ExtraToolsVscode';
-    readonly activityBarId = 'tools-vscode-jnoronha-tools';
+export class VscodeTools extends App {
+    static readonly className = 'VscodeTools';
+    readonly activityBarId = 'vscode-tools-jnoronha';
 
     constructor(
         lib: Lib
     ) {
-        super(lib, ExtraToolsVscode.className);
+        super(lib, VscodeTools.className);
         this.prepareAll([
             {
                 treeItem: {
-                    label: "Generate VSIX",
-                    command: { command: this.getCommand('generatepackage'), title: "" }
+                    label: "Create Extension",
+                    command: { command: this.getCommand('createnewextension'), title: '' }
                 },
                 callback: {
-                    caller: this.generateVsixPackages,
-                    isSync: true,
+                    caller: this.createNewExtensions,
                     thisArg: this
                 }
             },
@@ -43,21 +42,11 @@ export class ExtraToolsVscode extends App {
             },
             {
                 treeItem: {
-                    label: "Create Extension",
-                    command: { command: this.getCommand('createnewextension'), title: '' }
+                    label: "Generate VSIX",
+                    command: { command: this.getCommand('generatepackage'), title: "" }
                 },
                 callback: {
-                    caller: this.createNewExtensions,
-                    thisArg: this
-                }
-            },
-            {
-                treeItem: {
-                    label: "Change Java Versions",
-                    command: { command: this.getCommand('changejavaversions'), title: '' }
-                },
-                callback: {
-                    caller: this.changeJavaVersions,
+                    caller: this.generateVsixPackages,
                     isSync: true,
                     thisArg: this
                 }
@@ -131,31 +120,6 @@ export class ExtraToolsVscode extends App {
             this.lib.consoleExtend.execOutputChannel('vsce package', { cwd: workspaceDir, shell: this.lib.consoleExtend.getShell(ShellTypeEnum.bash).command });
             processing.disable();
             this.lib.consoleExtend.onOutputChannel("Done", {isNewLine: true});
-        }
-    }
-
-    private changeJavaVersions() {
-        const javaEnv = LibStatic.readEnvVariable("JAVA_HOME");
-        const javaVersionsConfig = this.lib.extensionData.configData["javaversions"] as Object;
-        if (javaVersionsConfig) {
-            let items: QuickPickItem[] = [];
-
-            Object.entries(javaVersionsConfig).forEach(([key, value]) => {
-                value = LibStatic.resolvePath<string>(value);
-                value = value.substr(value.length - 1) === '/' || value.substr(value.length - 1) === '\\'
-                    ? value.slice(0, -1) : value;
-                let isActive = javaEnv === value;
-                items.push({label: key, detail: value, description: isActive ? 'ACTIVE' : ''});
-            });
-            LibStatic.createQuickPick(items, { canPickMany: false }).then((selection) => {
-                selection = selection as QuickPickItem | undefined;
-                // User made final selection
-                if (!selection) {
-                    return;
-                } else {
-                    this.lib.consoleExtend.runCommandPowerShellAsAdmin(`${this.scriptsToSystem.windows} -JAVA_PATH '${selection.detail}'`);
-                }
-            });
         }
     }
 }

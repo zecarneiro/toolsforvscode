@@ -1,17 +1,16 @@
-import { LibStatic } from './../utils/lib-static';
+import { LibStatic } from '../utils/lib-static';
 import { IStatusStorageDb } from '../interface/status-storage-db-interface';
 import { ProfileManagerMsgEnum } from '../enum/profiles-manager-enum';
-import { IDisabledExt } from '../interface/profiles-manager-interface';
-import { IProfiles } from '../interface/profiles-manager-interface';
+import { IDisabledExt, IProfiles } from '../interface/profiles-manager-interface';
 import { App } from '../app';
 import { extensions, QuickPickItem } from 'vscode';
 import { NotifyEnum, PlatformTypeEnum } from '../utils/enum/lib-enum';
 import { ShellTypeEnum } from '../utils/enum/console-extends-enum';
 import { Lib } from '../utils/lib';
 
-export class ProfilesManager extends App {
-    static readonly className = 'ProfilesManager';
-    readonly activityBarId = 'tools-vscode-jnoronha-profiles';
+export class ProfilesManagerTools extends App {
+    static readonly className = 'ProfilesManagerTools';
+    readonly activityBarId = 'profiles-manager-tools-jnoronha';
 
     private profilesData: IProfiles[];
 
@@ -34,7 +33,7 @@ export class ProfilesManager extends App {
     constructor(
         lib: Lib
     ) {
-        super(lib, ProfilesManager.className);
+        super(lib, ProfilesManagerTools.className);
         this.profilesData = [];
         this.cmdProfilesManager = this.getCommand('profilesmanager');
 

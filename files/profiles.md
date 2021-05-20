@@ -39,7 +39,8 @@
         "name": "Git/CI-CD",
         "data": [
             "eamodio.gitlens",
-            "pivotal.vscode-concourse"
+            "pivotal.vscode-concourse",
+            "mhutchie.git-graph"
         ]
     },
     {
@@ -100,7 +101,9 @@
             "njpwerner.autodocstring",
             "ms-python.python",
             "magicstack.MagicPython",
-            "ms-python.vscode-pylance"
+            "ms-python.vscode-pylance",
+            "mgesbert.python-path",
+            "KevinRose.vsc-python-indent"
         ]
     },
     {
@@ -115,7 +118,8 @@
             "austin.code-gnu-global",
             "twxs.cmake",
             "cschlosser.doxdocgen",
-            "Hiyajo.cppcomment"
+            "Hiyajo.cppcomment",
+            "ms-vscode.cmake-tools"
         ]
     },
     {
@@ -175,60 +179,6 @@
         "data": [
             "sporiley.css-auto-prefix",
             "michelemelluso.code-beautifier"
-        ]
-    },
-    {
-        "name": "C#/F#",
-        "data": [
-            "ms-dotnettools.csharp",
-            "ionide.ionide-fsharp",
-            "Fudge.auto-using",
-            "craigthomas.supersharp",
-            "adrianwilczynski.namespace",
-            "tdallau-csharpextensions.csharpextensions",
-            "FraserCrosbie.csharp-model-to-builder",
-            "RichardZampieriprog.csharp-snippet-productivity"
-        ]
-    },
-    {
-        "name": ".NET",
-        "data": [
-            "ms-dotnettools.dotnet-interactive-vscode",
-            "ms-dotnettools.blazorwasm-companion",
-            "ms-dotnettools.vscode-dotnet-sdk",
-            "ms-dotnettools.vscode-dotnet-runtime",
-            "ms-dotnettools.vscode-dotnet-pack",
-            "formulahendry.dotnet-test-explorer",
-            "formulahendry.dotnet",
-            "leo-labs.dotnet",
-            "adrianwilczynski.add-reference"
-        ]
-    },
-    {
-        "name": "Java",
-        "data": [
-            "redhat.java",
-            "vscjava.vscode-java-debug",
-            "vscjava.vscode-java-test",
-            "vscjava.vscode-maven",
-            "vscjava.vscode-java-dependency",
-            "vscjava.vscode-java-pack",
-            "redhat.vscode-server-connector",
-            "shengchen.vscode-checkstyle",
-            "dgileadi.java-decompiler",
-            "ithildir.java-properties",
-            "sohibe.java-generate-setters-getters",
-            "redhat.vscode-microprofile",
-            "microprofile-community.mp-starter-vscode-ext",
-            "microprofile-community.mp-rest-client-generator-vscode-ext",
-            "redhat.vscode-quarkus"
-        ]
-    },
-    {
-        "name": "Spring",
-        "data": [
-            "pivotal.vscode-spring-boot",
-            "Pivotal.vscode-boot-dev-pack"
         ]
     }
 ]
