@@ -1,0 +1,3 @@
+[submodule "utils/vscode-utils"]
+	path = utils/vscode-utils
+	url = https://github.com/zecarneiro/vscode-utils.git
