@@ -1,49 +1,81 @@
-import { NotifyEnum } from "./utils/enum/lib-enum";
-import { ITreeItemExtend, ITreeItemWithChildren } from "./utils/interface/lib-interface";
-import { Lib } from "./utils/lib";
-import { LibStatic } from "./utils/lib-static";
+import { IDirectories } from './../sub-projects/utils/src/interface/directories';
+import { ExtensionContext } from 'vscode';
+import { IExtensionInfo } from '../sub-projects/utils/src/interface/extension-info';
+import { ILogger } from '../sub-projects/utils/src/interface/logger';
+import { ITreeItemExtend } from '../sub-projects/utils/src/interface/tree-item-extend';
+import { ITreeItemWithChildren } from '../sub-projects/utils/src/interface/tree-item-with-children';
+import { FilesSystem } from '../sub-projects/utils/src/nodejs/files-system';
+import { SshExtend } from '../sub-projects/utils/src/nodejs/ssh-extend';
+import { ConsoleVs } from '../sub-projects/utils/src/vscode/console-vs';
+import { GenericVs } from '../sub-projects/utils/src/vscode/generic-vs';
+import { WindowManager } from '../sub-projects/utils/src/vscode/window-manager';
+import { StorageExtensions } from '../sub-projects/utils/src/vscode/storage-extensions';
 
 export abstract class App {
     static readonly id = 'jnoronha.toolsforvscode';
     static readonly extensionName = 'Tools For VSCode';
     abstract readonly activityBarId: string;
-
-    protected filesDir: string;
-    protected scriptsDir: string;
-    protected readonly tableStateStorage = 'ItemTable';
+    abstract className: string = '';
+    protected currentMethod: string = '';
     protected scriptsToSystem = {
         linux: '',
         windows: ''
     };
 
     constructor(
-        protected lib: Lib,
-        private objectName: string
+        protected context: ExtensionContext,
+        protected extensionPath: string,
+        protected directories: IDirectories,
+        private windowManager: WindowManager,
+        private loggerExtension: ILogger
     ) {
-        this.filesDir = LibStatic.resolvePath<string>(lib.getExtensionPath() + '/files');
-        this.scriptsDir = LibStatic.resolvePath<string>(lib.getExtensionPath() + '/scripts');
-        this.scriptsToSystem.linux = LibStatic.resolvePath<string>(this.scriptsDir + '/to-linux.sh');
-        this.scriptsToSystem.windows = LibStatic.resolvePath<string>(this.scriptsDir + '/to-windows.ps1');
+        this.scriptsToSystem.linux = FilesSystem.resolvePath(this.directories.scripts + '/to-linux.sh');
+        this.scriptsToSystem.windows = FilesSystem.resolvePath(this.directories.scripts + '/to-windows.ps1');
     }
 
-    protected prepareAll(dataTreeItemVscodeCmd: ITreeItemWithChildren[] | ITreeItemExtend[]) {
-        this.lib.createActivityBar(dataTreeItemVscodeCmd, this.activityBarId);
+    protected get logger(): ILogger {
+        this.loggerExtension.class = undefined;
+        this.loggerExtension.method = this.currentMethod;
+        return this.loggerExtension;
     }
 
-    protected printMessages(data: any, isOutputChannel: boolean, type?: NotifyEnum) {
-        if (isOutputChannel) {
-            this.lib.consoleExtend.onOutputChannel(data);
-        } else {
-            LibStatic.notify(`${App.extensionName}-${this.objectName}: ${data}`, type);
+    private _console: ConsoleVs|undefined;
+    protected get console(): ConsoleVs {
+        if (!this._console) {
+            this._console = new ConsoleVs(App.extensionName, this.logger);
         }
+        return this._console;
+    }
+
+    private _sshExtend: SshExtend|undefined;
+    protected get sshExtend(): SshExtend {
+        if (!this._sshExtend) {
+            this._sshExtend = new SshExtend(this.logger);
+        }
+        return this._sshExtend;
+    }
+
+    private _storageExtensions: StorageExtensions|undefined;
+    protected get storageExtensions(): StorageExtensions {
+        if (!this._storageExtensions) {
+            this._storageExtensions = new StorageExtensions(this.context, this.logger);
+        }
+        return this._storageExtensions;
+    }
+
+    getExtensionInfo(): IExtensionInfo {
+        return GenericVs.getExtensionInfo(App.id);
+    }
+
+    getSettings<T = any>(section?: string): T {
+        return GenericVs.getExtensionSettings<T>(App.id, section);
     }
 
     protected getCommand(name: string): string {
-        name = `${this.objectName}${name}`;
-        return this.lib.getCommandFormated(name);
+        return `${this.getExtensionInfo().name}.${this.className}${name}`;
     }
 
-    closeSshConnection() {
-        this.lib.sshExtend.closeConnection();
+    protected prepareAll(dataTreeItemVscodeCmd: ITreeItemWithChildren[] | ITreeItemExtend[]) {
+        this.windowManager.createActivityBar(dataTreeItemVscodeCmd, this.activityBarId);
     }
 }
