@@ -4,18 +4,17 @@
 [
     {
         "name": "VSCode",
+        "hide": true,
         "data": [
             "gruntfuggly.todo-tree",
             "vscode-icons-team.vscode-icons",
             "CoenraadS.bracket-pair-colorizer",
             "alefragnani.project-manager",
-            "ms-vsliveshare.vsliveshare",
             "alefragnani.Bookmarks",
             "SirTori.indenticator",
             "nobuhito.printcode",
             "naumovs.color-highlight",
             "wayou.vscode-todo-highlight",
-            "akmarnafi.comment-headers",
             "IBM.output-colorizer",
             "formulahendry.terminal",
             "natqe.reload",
@@ -24,23 +23,28 @@
     },
     {
         "name": "Generic",
+        "hide": true,
         "data": [
             "christian-kohler.path-intellisense",
             "aaron-bond.better-comments",
             "VisualStudioExptTeam.vscodeintellicode",
             "rpinski.shebang-snippets",
-            "quicktype.quicktype",
             "SonarSource.sonarlint-vscode",
-            "SonatypeCommunity.vscode-iq-plugin",
             "chrmarti.regex"
+        ]
+    },
+    {
+        "name": "Multi-Profile Dependencies",
+        "hide": true,
+        "data": [
+            "Pivotal.vscode-manifest-yaml", // Spring/YML
+            "pivotal.vscode-concourse" // Spring/CI-CD - For CI/CD
         ]
     },
     {
         "name": "Git/CI-CD",
         "data": [
-            "eamodio.gitlens",
-            "pivotal.vscode-concourse",
-            "mhutchie.git-graph"
+            "eamodio.gitlens"
         ]
     },
     {
@@ -57,7 +61,6 @@
             "nickdemayo.vscode-json-editor",
             "torn4dom4n.latex-support",
             "asciidoctor.asciidoctor-vscode",
-            "joaompinto.asciidoctor-vscode",
             "42Crunch.vscode-openapi"
         ]
     },
@@ -169,8 +172,7 @@
             "redhat.vscode-xml",
             "redhat.vscode-yaml",
             "formulahendry.auto-rename-tag",
-            "fabianlauer.vs-code-xml-format",
-            "Pivotal.vscode-manifest-yaml"
+            "fabianlauer.vs-code-xml-format"
         ]
     },
     {
