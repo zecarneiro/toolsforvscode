@@ -1,19 +1,24 @@
 'use strict';
-var fs = require("fs");
-var path = require("path");
-
-var DIST_DIR = "./dist";
-
-var resolvePath = (strPath) => {
+const fse = require("fs-extra");
+const path = require("path");
+const DIST_DIR = "./dist";
+const resolvePath = (strPath) => {
     return path.resolve(strPath);
 };
-var PrepareUtils = require(resolvePath('./src/utils/scripts/prepare-utils'));
+const filterFunc = (src, dest) => {
+    if (src && src.includes('prepare-to-build.js')) {
+        return false;
+    }
+    return true;
+};
+var utilsDirectory = resolvePath('./sub-projects/utils');
 
 var main = () => {
-    if (fs.existsSync(DIST_DIR)) {
+    if (fse.existsSync(DIST_DIR)) {
         console.log("> Clean dist directory");
-        fs.rmdirSync(DIST_DIR, { recursive: true });
+        fse.rmdirSync(DIST_DIR, { recursive: true });
     }
-    PrepareUtils(process.cwd(), `${process.cwd()}/src/utils`);
+    console.log("> Copy files directory from subproject");
+    fse.copySync(resolvePath(utilsDirectory + '/files'), resolvePath("./files"), { recursive: true });
 };
 main();
