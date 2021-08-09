@@ -1,6 +1,3 @@
-[submodule "utils/vscode-utils"]
-	path = utils/vscode-utils
-	url = https://github.com/zecarneiro/vscode-utils.git
-[submodule "utils/nodejs-utils"]
-	path = utils/nodejs-utils
-	url = https://github.com/zecarneiro/nodejs-utils.git
+[submodule "sub-projects/utils"]
+	path = sub-projects/utils
+	url = https://github.com/zecarneiro/utils.git

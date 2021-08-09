@@ -5,6 +5,7 @@
 /test/*
 /dist/*
 /utils/*
+/files/sqlite3/*
 !/.vscode/launch.json
 !/.vscode/settings.json
 !/.vscode/tasks.json
