@@ -62,6 +62,17 @@ export class ProfilesManagerTools extends App {
             },
             {
                 treeItem: {
+                    label: "Show Status all Extensions",
+                    command: { command: this.getCommand('extensionsunshowstatus'), title: '' }
+                },
+                callback: {
+                    caller: this.showStatus,
+                    isSync: true,
+                    thisArg: this
+                }
+            },
+            {
+                treeItem: {
                     label: "Show My Default Extensions",
                     command: { command: this.getCommand('showdefaultprofiles'), title: '' }
                 },
@@ -94,21 +105,23 @@ export class ProfilesManagerTools extends App {
         });
     }
 
+    private getConfig(): IProfiles[] {
+        const profileConfig = this.getSettings<IProfiles[]>(this.config);
+        return profileConfig ? profileConfig : [];
+    }
+
     @annotateName
     private prepareProfiles() {
-        let profileConfig = this.getSettings<IProfiles[]>(this.config);
-        if (profileConfig && profileConfig.length > 0) {
-            let immutableIds: string[] = [];
-            profileConfig.forEach(profiles => {
-                if (profiles.hide) {
-                    immutableIds = immutableIds.concat(profiles.data);
-                } else {
-                    this.profilesData.push(profiles);
-                }
-            });
-            this.storageExtensions.immutableNoDisableIds = immutableIds;
-            this.storageExtensions.enableImmutable();
-        }
+        let immutableIds: string[] = [];
+        this.getConfig().forEach(profiles => {
+            if (profiles.hide) {
+                immutableIds = immutableIds.concat(profiles.data);
+            } else {
+                this.profilesData.push(profiles);
+            }
+        });
+        this.storageExtensions.immutableNoDisableIds = immutableIds;
+        this.storageExtensions.enableImmutable();
     }
 
     @annotateName
@@ -157,17 +170,46 @@ export class ProfilesManagerTools extends App {
     @annotateName
     private InstallUninstallExt(isInstall: boolean) {
         let ids: string[] = [];
-        for (const profile of this.profilesData) {
-            for (const id of profile.data) {
-                if (id !== App.id) {
-                    ids.push(id);
+        let profileConfig = this.getSettings<IProfiles[]>(this.config);
+        if (profileConfig && profileConfig.length > 0) {
+            for (const profile of profileConfig) {
+                for (const id of profile.data) {
+                    if (id !== App.id) {
+                        ids.push(id);
+                    }
                 }
             }
+            if (isInstall) {
+                GenericVs.installExtensions(ids, this.console, this.logger, this.context);
+            } else {
+                GenericVs.uninstallExtensions(ids, this.console, this.logger, this.context);
+            }
         }
-        if (isInstall) {
-            GenericVs.installExtensions(ids, this.console, this.logger, this.context);
-        } else {
-            GenericVs.uninstallExtensions(ids, this.console, this.logger, this.context);
+    }
+
+    @annotateName
+    private showStatus() {
+        let refresh = true;
+        let message = {disabled: '', installed: '', notInstalled: ''};
+        for (const config of this.getConfig()) {
+            config.data.forEach(id => {
+                if (this.storageExtensions.isDisabled(id, refresh ? false : refresh)) {
+                    message.disabled += `This extension id '${id}' is disabled!\n`;
+                } else if (GenericVs.isExtensionInstalled(id)) {
+                    message.installed += `This extension id '${id}' is installed!\n`;
+                } else {
+                    message.notInstalled += `This extension id '${id}' is 'not installed'!\n`;
+                }
+            });
+        }
+        if (message.notInstalled.length > 0) {
+            this.logger.error(message.notInstalled);
+        }
+        if (message.disabled.length > 0) {
+            this.logger.warn(message.disabled);
+        }
+        if (message.installed.length > 0) {
+            this.logger.success(message.installed);
         }
     }
 }
