@@ -18,7 +18,13 @@
             "IBM.output-colorizer",
             "formulahendry.terminal",
             "natqe.reload",
-            "zhuangtongfa.Material-theme"
+            "zhuangtongfa.Material-theme",
+			"orepor.color-tabs-vscode-ext",
+			"ryu1kn.partial-diff",
+			"BriteSnow.vscode-toggle-quotes",
+			"wwm.better-align",
+			"Rubymaniac.vscode-paste-and-indent",
+			"tombonnike.vscode-status-bar-format-toggle"
         ]
     },
     {
@@ -30,7 +36,11 @@
             "VisualStudioExptTeam.vscodeintellicode",
             "rpinski.shebang-snippets",
             "SonarSource.sonarlint-vscode",
-            "chrmarti.regex"
+            "chrmarti.regex",
+			"DominicVonk.parameter-hints",
+			"vincaslt.highlight-matching-tag",
+			"stylelint.vscode-stylelint",
+			"usernamehw.errorlens"
         ]
     },
     {
@@ -44,9 +54,16 @@
     {
         "name": "Git/CI-CD",
         "data": [
-            "eamodio.gitlens"
+            "eamodio.gitlens",
+			"rubbersheep.gi"
         ]
     },
+	{
+		"name": "Markdown",
+		"data":[
+			"yzhang.markdown-all-in-one"
+		]
+	},
     {
         "name": "WSL",
         "data": ["ms-vscode-remote.remote-wsl"]
@@ -65,11 +82,12 @@
         ]
     },
     {
-        "name": "UML/Drawio/Excel",
+        "name": "UML/Drawio/Excel/CSV",
         "data": [
             "GrapeCity.gc-excelviewer",
             "jebbs.plantuml",
-            "hediet.vscode-drawio"
+            "hediet.vscode-drawio",
+			"mechatroner.rainbow-csv"
         ]
     },
     {
@@ -121,17 +139,23 @@
             "twxs.cmake",
             "cschlosser.doxdocgen",
             "Hiyajo.cppcomment",
-            "ms-vscode.cmake-tools"
+            "ms-vscode.cmake-tools",
+			"llvm-vs-code-extensions.vscode-clangd",
+			"RichardHe.you-complete-me"
         ]
     },
     {
         "name": "PHP",
         "data": [
             "bmewburn.vscode-intelephense-client",
-            "felixfbecker.php-intellisense",
             "neilbrayfield.php-docblocker",
             "rexshi.phpdoc-comment-vscode-plugin",
-            "felixfbecker.php-debug"
+            "felixfbecker.php-debug",
+			"rifi2k.format-html-in-php",
+			"junstyle.php-cs-fixer",
+			"ikappas.phpcs",
+			"kokororin.vscode-phpfmt",
+			"ikappas.composer"
         ]
     },
     {
@@ -143,7 +167,12 @@
             "christian-kohler.npm-intellisense",
             "dbaeumer.vscode-eslint",
             "stevencl.adddoccomments",
-            "NicholasHsiang.vscode-javascript-comment"
+            "NicholasHsiang.vscode-javascript-comment",
+			"rbbit.typescript-hero",
+			"lannonbr.vscode-js-annotations",
+			"tusaeff.vscode-typescript-destructure-plugin",
+			"dotup.dotup-vscode-interface-generator",
+			"vilicvane.es-quotes"
         ]
     },
     {
@@ -154,7 +183,8 @@
             "mads-hartmann.bash-ide-vscode",
             "rogalmic.bash-debug",
             "rogalmic.ksh-debug",
-            "timonwong.shellcheck"
+            "timonwong.shellcheck",
+			"truman.autocomplate-shell"
         ]
     },
     {
@@ -179,8 +209,16 @@
         "name": "CSS/SASS/SCSS/LESS",
         "data": [
             "sporiley.css-auto-prefix",
-            "michelemelluso.code-beautifier"
+            "michelemelluso.code-beautifier",
+			"pranaygp.vscode-css-peek",
+			"mrmlnc.vscode-autoprefixer"
         ]
-    }
+    },
+	{
+		"name": "Azure",
+		"data": [
+			"bencoleman.armview"
+		]
+	}
 ]
 ```
