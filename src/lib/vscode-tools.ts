@@ -26,13 +26,20 @@ export class VscodeTools extends App {
         this.prepareAll([
             {
                 treeItem: {
-                    label: "Restart VS Code",
+                    label: "Restart VSCode",
                     command: { command: this.getCommand('reloadvscodeonprofilechange'), title: "" }
                 },
                 callback: {
                     caller: this.restartVScode,
                     isSync: true,
                     thisArg: this
+                }
+            },
+            {
+                // Based on extension: https://github.com/natqe/reload
+                treeItem: {
+                    label: "Reload VSCode",
+                    command: { command: 'workbench.action.reloadWindow', title: '' }
                 }
             },
             {

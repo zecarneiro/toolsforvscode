@@ -17,14 +17,13 @@
             "wayou.vscode-todo-highlight",
             "IBM.output-colorizer",
             "formulahendry.terminal",
-            "natqe.reload",
             "zhuangtongfa.Material-theme",
 			"orepor.color-tabs-vscode-ext",
 			"ryu1kn.partial-diff",
 			"BriteSnow.vscode-toggle-quotes",
 			"wwm.better-align",
 			"Rubymaniac.vscode-paste-and-indent",
-			"tombonnike.vscode-status-bar-format-toggle"
+            "mkxml.vscode-filesize"
         ]
     },
     {
@@ -33,6 +32,8 @@
         "data": [
             "christian-kohler.path-intellisense",
             "aaron-bond.better-comments",
+            "kevinkyang.auto-comment-blocks",
+            "stackbreak.comment-divider",
             "VisualStudioExptTeam.vscodeintellicode",
             "rpinski.shebang-snippets",
             "SonarSource.sonarlint-vscode",
@@ -40,7 +41,8 @@
 			"DominicVonk.parameter-hints",
 			"vincaslt.highlight-matching-tag",
 			"stylelint.vscode-stylelint",
-			"usernamehw.errorlens"
+			"usernamehw.errorlens",
+            "hediet.debug-visualizer"
         ]
     },
     {
@@ -60,9 +62,7 @@
     },
 	{
 		"name": "Markdown",
-		"data":[
-			"yzhang.markdown-all-in-one"
-		]
+		"data":["yzhang.markdown-all-in-one"]
 	},
     {
         "name": "WSL",
@@ -73,22 +73,36 @@
         "data": ["liximomo.sftp"]
     },
     {
-        "name": "Latex/ASCIIDOC/OpenAPI/JSON",
-        "data": [
-            "nickdemayo.vscode-json-editor",
-            "torn4dom4n.latex-support",
-            "asciidoctor.asciidoctor-vscode",
-            "42Crunch.vscode-openapi"
-        ]
+        "name": "Latex",
+        "data": ["torn4dom4n.latex-support"]
     },
     {
-        "name": "UML/Drawio/Excel/CSV",
-        "data": [
-            "GrapeCity.gc-excelviewer",
-            "jebbs.plantuml",
-            "hediet.vscode-drawio",
-			"mechatroner.rainbow-csv"
-        ]
+        "name": "JSON",
+        "data": ["nickdemayo.vscode-json-editor"]
+    },
+    {
+        "name": "ASCIIDOC",
+        "data": ["asciidoctor.asciidoctor-vscode"]
+    },
+    {
+        "name": "OpenAPI",
+        "data": ["42Crunch.vscode-openapi"]
+    },
+    {
+        "name": "Excel",
+        "data": ["GrapeCity.gc-excelviewer"]
+    },
+    {
+        "name": "UML",
+        "data": ["jebbs.plantuml"]
+    },
+    {
+        "name": "Drawio",
+        "data": ["hediet.vscode-drawio"]
+    },
+    {
+        "name": "CSV",
+        "data": ["mechatroner.rainbow-csv"]
     },
     {
         "name": "Docker",
@@ -139,9 +153,7 @@
             "twxs.cmake",
             "cschlosser.doxdocgen",
             "Hiyajo.cppcomment",
-            "ms-vscode.cmake-tools",
-			"llvm-vs-code-extensions.vscode-clangd",
-			"RichardHe.you-complete-me"
+            "ms-vscode.cmake-tools"
         ]
     },
     {
@@ -172,7 +184,8 @@
 			"lannonbr.vscode-js-annotations",
 			"tusaeff.vscode-typescript-destructure-plugin",
 			"dotup.dotup-vscode-interface-generator",
-			"vilicvane.es-quotes"
+			"vilicvane.es-quotes",
+            "wallabyjs.quokka-vscode"
         ]
     },
     {
@@ -216,9 +229,18 @@
     },
 	{
 		"name": "Azure",
-		"data": [
-			"bencoleman.armview"
-		]
-	}
+		"data": ["bencoleman.armview"]
+	},
+    {
+        "name": "C#/.Net",
+        "data": [
+            "ms-dotnettools.csharp",
+            "formulahendry.dotnet-test-explorer",
+            "k--kato.docomment",
+            "formulahendry.dotnet",
+            "jmrog.vscode-nuget-package-manager",
+            "Fudge.auto-using"
+        ]
+    }
 ]
 ```
