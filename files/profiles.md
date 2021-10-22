@@ -23,7 +23,8 @@
 			"BriteSnow.vscode-toggle-quotes",
 			"wwm.better-align",
 			"Rubymaniac.vscode-paste-and-indent",
-            "mkxml.vscode-filesize"
+            "mkxml.vscode-filesize",
+            "ms-devlabs.extension-manifest-editor"
         ]
     },
     {
@@ -42,7 +43,8 @@
 			"vincaslt.highlight-matching-tag",
 			"stylelint.vscode-stylelint",
 			"usernamehw.errorlens",
-            "hediet.debug-visualizer"
+            "hediet.debug-visualizer",
+            "formulahendry.code-runner"
         ]
     },
     {
@@ -167,7 +169,8 @@
 			"junstyle.php-cs-fixer",
 			"ikappas.phpcs",
 			"kokororin.vscode-phpfmt",
-			"ikappas.composer"
+			"ikappas.composer",
+            "robberphex.php-debug"
         ]
     },
     {
@@ -185,7 +188,8 @@
 			"tusaeff.vscode-typescript-destructure-plugin",
 			"dotup.dotup-vscode-interface-generator",
 			"vilicvane.es-quotes",
-            "wallabyjs.quokka-vscode"
+            "wallabyjs.quokka-vscode",
+            "mikehanson.auto-barrel"
         ]
     },
     {
@@ -239,7 +243,23 @@
             "k--kato.docomment",
             "formulahendry.dotnet",
             "jmrog.vscode-nuget-package-manager",
-            "Fudge.auto-using"
+            "Fudge.auto-using",
+            "richardzampieriprog.csharp-snippet-productivity",
+            "roadsidejesus.csharp-helper"
+        ]
+    },
+    {
+        "name": "Cypress",
+        "data": [
+            "andrew-codes.cypress-snippets",
+            "shelex.vscode-cy-helper"
+        ]
+    },
+    {
+        "name": "Jest",
+        "data": [
+            "firsttris.vscode-jest-runner",
+            "andys8.jest-snippets"
         ]
     }
 ]

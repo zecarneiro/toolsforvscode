@@ -1,39 +1,39 @@
-import { LoggerVs } from './../sub-projects/utils/src/vscode/logger-vs';
-import { ILogger } from './../sub-projects/utils/src/interface/logger';
-import { ENotifyType } from './../sub-projects/utils/src/enum/notify-type';
-import { IDirectories } from './../sub-projects/utils/src/interface/directories';
-import { GenericVs } from './../sub-projects/utils/src/vscode/generic-vs';
+import { OthersTools } from './lib/others-tools';
 import { VscodeTools } from './lib/vscode-tools';
 import { ProfilesManagerTools } from './lib/profiles-manager-tools';
 import * as vscode from 'vscode';
-import { WindowManager } from '../sub-projects/utils/src/vscode/window-manager';
-import { FilesSystem } from '../sub-projects/utils/src/nodejs/files-system';
-import { App } from './app';
-import { Shell } from '../sub-projects/utils/src/nodejs/shell';
-import { SqliteExtend } from '../sub-projects/utils/src/nodejs/sqlite-extend';
+import { ETypeUtils, NodeVscode } from 'node-vscode-utils';
 
-let profilesManagerTools: ProfilesManagerTools | null;
-let vscodeTools: VscodeTools | null;
+const id = 'jnoronha.toolsforvscode';
+const extensionName = 'Tools For VSCode';
+const totalLibs = 3;
+
+function init(nodeVscode: NodeVscode, type: number) {
+  try {
+    switch (type) {
+      case 1:
+        new VscodeTools(nodeVscode, id);
+        break;
+      case 2:
+        new OthersTools(nodeVscode, id);
+        break;
+      case 0:
+      default:
+        new ProfilesManagerTools(nodeVscode, id);
+        break;
+    }
+  } catch (error) {
+    nodeVscode.logger.error(error);
+  }
+}
 
 export function activate(context: vscode.ExtensionContext) {
-	try {
-		const shell = new Shell();
-		const extensionPath: string = FilesSystem.resolvePath(GenericVs.getExtensionPath(context) + '/dist');
-		const directories: IDirectories = {
-			files: FilesSystem.resolvePath(extensionPath + '/../files'),
-			scripts: FilesSystem.resolvePath(extensionPath + '/../scripts')
-		};
-		shell.setEnv(SqliteExtend.driverSqliteDir, FilesSystem.resolvePath(directories.files + '/sqlite3'));
-		const windowManager = new WindowManager(context);
-		const logger: ILogger = new LoggerVs(App.extensionName);
-		vscodeTools = new VscodeTools(context, extensionPath, directories, windowManager, logger);
-		profilesManagerTools = new ProfilesManagerTools(context, extensionPath, directories, windowManager, logger);
-	} catch (error) {
-		profilesManagerTools = null;
-		vscodeTools = null;
-		WindowManager.notify(error, ENotifyType.error);
-	}
+  const nodeVscode: NodeVscode = new NodeVscode(extensionName, ETypeUtils.vscode, context);
+  nodeVscode.sqlite.command = nodeVscode.extensionsManagerVs.getExtensionSettings<string>(id, 'sqlite-command'); <string>('sqlite-command');
+  for (let i = 0; i < totalLibs; ++i) {
+    init(nodeVscode, i);
+  }
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() { /* This is intentional */ }
+export function deactivate() {/* This is intentional */}
