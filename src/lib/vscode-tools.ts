@@ -1,5 +1,5 @@
-import { annotateName, ENotifyType, EShellType, IProcessing, NodeVscode } from 'node-vscode-utils';
 import { App } from '../app';
+import { annotateName, ENotifyType, EShellType, NodeVscode } from '../vendor/node-vscode-utils/src';
 
 
 export class VscodeTools extends App {
@@ -18,13 +18,6 @@ export class VscodeTools extends App {
           caller: this.restartVScode,
           isSync: true,
           thisArg: this,
-        },
-      },
-      {
-        // Based on extension: https://github.com/natqe/reload
-        treeItem: {
-          label: 'Reload VSCode',
-          command: { command: 'workbench.action.reloadWindow', title: '' },
         },
       },
       {
@@ -73,6 +66,9 @@ export class VscodeTools extends App {
     // Create and show collapse/expand region statusbar for extension
     this.windowsManager.createStatusBar({ text: '$(fold-up)', command: 'editor.foldRecursively', tooltip: 'Collapse Recursive By Cursor' });
     this.windowsManager.createStatusBar({ text: '$(fold-down)', command: 'editor.unfoldRecursively', tooltip: 'Expand Recursive By Cursor' });
+
+    // Reload
+    this.windowsManager.createStatusBar({ text: 'Reload', command: 'workbench.action.reloadWindow', tooltip: 'Reload VSCode' });
   }
 
   @annotateName
@@ -82,6 +78,7 @@ export class VscodeTools extends App {
     if (path.length > 0) {
       path = this.nodeVscode.fileSystem.resolvePath(path);
       this.nodeVscode.console.execSync({ cmd: 'yo code', cwd: path, successCode: 0 });
+      this.logger.showOutputChannel();
     }
   }
 
@@ -89,7 +86,6 @@ export class VscodeTools extends App {
   private generateVsixPackages() {
     const workspaceDir: string | undefined = this.extensionsManager.getWorkspaceRootPath();
     if (workspaceDir && workspaceDir.length > 0) {
-      let processing: IProcessing;
       const vscodeIgnoreFile = this.nodeVscode.fileSystem.resolvePath(workspaceDir + '/.vscodeignore');
       const vscodeIgnoreData: string[] = [
         '.vscode/**',
@@ -127,12 +123,10 @@ export class VscodeTools extends App {
 
       if (isNewDataInserted) {
         this.logger.notify('Write ' + vscodeIgnoreFile);
-        processing = this.nodeVscode.functions.startProcessing(this.logger);
         this.nodeVscode.fileSystem.writeDocument(vscodeIgnoreFile, dataToInsert);
-        processing.disable();
       }
       this.logger.notify('Create package');
-      this.nodeVscode.console.execOnTerminal({ cmd: 'vsce package', cwd: workspaceDir, successCode: 0 });
+      this.nodeVscode.console.exec({ cmd: 'vsce package', cwd: workspaceDir, successCode: 0 });
     } else {
       this.logger.notify('Invalid workspace directory', ENotifyType.error);
     }
@@ -141,7 +135,7 @@ export class VscodeTools extends App {
   @annotateName
   private restartVScode() {
     if (this.nodeVscode.fileSystem.isWindows) {
-      this.nodeVscode.console.execSync({ cmd: `${this.scriptsToSystem.windows} -RELOAD_VSCODE_CHANGED_PROFILE 1`, shellType: EShellType.powershell }, false);
+      this.nodeVscode.console.execSync({ cmd: `${this.scriptsToSystem.windows} -RELOAD_VSCODE_CHANGED_PROFILE 1`, shellType: EShellType.powershell });
     } else {
       this.logger.notify('Not implemented yet!!!');
     }

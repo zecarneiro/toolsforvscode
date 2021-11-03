@@ -1,5 +1,39 @@
-### DEFAULT PROFILES
+# Tips and Profiles
 
+## Table of Contents
+- [Tips and Profiles](#tips-and-profiles)
+  - [Table of Contents](#table-of-contents)
+    - [Tips for VS Code configurations](#tips-for-vs-code-configurations)
+    - [Profiles](#profiles)
+
+### Tips for VS Code configurations
+```json
+{
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-8",
+            "path": "/path/for/jdk-8",
+        },
+        {
+            "name": "JavaSE-17",
+            "path": "/path/for/jdk-17",
+        }
+    ],
+    "java.home": "/path/for/jdk",
+    "sonarlint.ls.javaHome": "/path/for/jdk",
+    "editor.codeLens": true,
+    "javascript.referencesCodeLens.enabled": true,
+    "typescript.referencesCodeLens.enabled": true,
+    "java.referencesCodeLens.enabled": true,
+    "editor.fontSize": 12,
+    "php.suggest.basic": false,
+    "php.validate.run": "onType",
+    "explorer.confirmDelete": true,
+    "explorer.confirmDragAndDrop": true,
+}
+```
+
+### Profiles
 ```json
 [
     {
@@ -170,11 +204,12 @@
 			"ikappas.phpcs",
 			"kokororin.vscode-phpfmt",
 			"ikappas.composer",
-            "robberphex.php-debug"
+            "robberphex.php-debug",
+            "DEVSENSE.phptools-vscode"
         ]
     },
     {
-        "name": "Typescript/Javascript/NPM",
+        "name": "Typescript/Javascript/Node",
         "data": [
             "steoates.autoimport",
             "ms-vscode.vscode-typescript-tslint-plugin",
@@ -189,7 +224,8 @@
 			"dotup.dotup-vscode-interface-generator",
 			"vilicvane.es-quotes",
             "wallabyjs.quokka-vscode",
-            "mikehanson.auto-barrel"
+            "mikehanson.auto-barrel",
+            "idered.npm"
         ]
     },
     {
@@ -260,6 +296,32 @@
         "data": [
             "firsttris.vscode-jest-runner",
             "andys8.jest-snippets"
+        ]
+    },
+    {
+        "name": "Java/Maven",
+        "data": [
+            "redhat.java",
+            "youmaycallmev.vscode-java-saber",
+            "vscjava.vscode-maven",
+            "vscjava.vscode-java-debug",
+            "vscjava.vscode-java-test",
+            "ithildir.java-properties",
+            "dgileadi.java-decompiler"
+        ]
+    },
+    {
+        "name": "Spring",
+        "data": [
+            "vscjava.vscode-spring-boot-dashboard",
+            "vscjava.vscode-spring-initializr",
+            "Pivotal.vscode-spring-boot"
+        ]
+    },
+    {
+        "name": "Tomcat",
+        "data": [
+            "adashen.vscode-tomcat"
         ]
     }
 ]

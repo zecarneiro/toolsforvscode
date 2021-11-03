@@ -16,7 +16,7 @@
 		"files",
 		"scripts",
 		"node_modules",
-		"vendors",
+		"vendor",
 		"src/test"
 	]
 }

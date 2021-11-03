@@ -2,7 +2,7 @@ import { OthersTools } from './lib/others-tools';
 import { VscodeTools } from './lib/vscode-tools';
 import { ProfilesManagerTools } from './lib/profiles-manager-tools';
 import * as vscode from 'vscode';
-import { ETypeUtils, NodeVscode } from 'node-vscode-utils';
+import { ETypeUtils, NodeVscode } from './vendor/node-vscode-utils/src';
 
 const id = 'jnoronha.toolsforvscode';
 const extensionName = 'Tools For VSCode';

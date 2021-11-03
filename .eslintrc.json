@@ -17,6 +17,7 @@
     "plugins": [
         "@typescript-eslint"
     ],
+    "ignorePatterns": ["node_modules/**", "scripts/**"],
     "rules": {
         "max-len": "off",
         "require-jsdoc": "off",

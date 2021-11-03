@@ -1,7 +1,7 @@
-import { annotateName, NodeVscode } from 'node-vscode-utils';
 import { QuickPickItem, workspace } from 'vscode';
 import { App } from '../app';
 import { IProfiles } from '../interface/profiles';
+import { annotateName, Generic, NodeVscode } from '../vendor/node-vscode-utils/src';
 
 export class ProfilesManagerTools extends App {
   private profilesData: IProfiles[] = [];
@@ -10,7 +10,6 @@ export class ProfilesManagerTools extends App {
 
 
   // CONFIGURATIONS
-  private readonly defaultMdProfilesFile = this.nodeVscode.fileSystem.resolvePath(this.directories.files + '/profiles.md');
   private readonly config = 'profiles';
 
   constructor(
@@ -56,19 +55,6 @@ export class ProfilesManagerTools extends App {
           thisArg: this,
         },
       },
-      {
-        treeItem: {
-          label: 'Show My Default Extensions',
-          command: { command: this.getCommand('showdefaultprofiles'), title: '' },
-        },
-        callback: {
-          caller: () => {
-            this.nodeVscode.fileSystem.showFilesMD(this.defaultMdProfilesFile);
-          },
-          isSync: true,
-          thisArg: this,
-        },
-      },
     ]);
     this.console.registerVscodeCommand([
       {
@@ -106,25 +92,25 @@ export class ProfilesManagerTools extends App {
         this.profilesData.push(profiles);
       }
     });
-    this.extensionsManager.storage.immutableNoDisableIds = immutableIds;
-    this.extensionsManager.storage.enableImmutable();
+    this.extensionsManager.immutableNoDisableIds = immutableIds;
+    this.extensionsManager.enableImmutable();
   }
 
   @annotateName
   private disableExtensions(profiles: string[]) {
-    this.logger.info('Processing...');
     let ids: string[] = [];
     for (const profile of this.profilesData) {
       if (profiles.includes(profile.name) && !profile.data.includes(this.extensionId)) {
         ids = ids.concat(profile.data);
       }
     }
-    this.extensionsManager.storage.disable(ids);
+    this.extensionsManager.disable(ids);
+    this.logger.showOutputChannel();
   }
 
   @annotateName
   private createMenu() {
-    const disabledExtension = this.extensionsManager.storage.getAllDisabled();
+    const disabledExtension = this.extensionsManager.getAllDisabled();
     if (disabledExtension.hasError) {
       this.logger.error(disabledExtension.error?.message);
       return;
@@ -139,7 +125,7 @@ export class ProfilesManagerTools extends App {
       if (!selectedItems) {
         return;
       } else {
-        const selected = this.functions.convert<QuickPickItem[]>(selectedItems);
+        const selected = Generic.convert<QuickPickItem[]>(selectedItems);
         const profile: string[] = this.profilesData.map((profileData) => {
           if (!profileData.hide && selected.findIndex((x) => x.label === profileData.name) < 0) {
             return profileData.name;
@@ -180,7 +166,7 @@ export class ProfilesManagerTools extends App {
     const message = { disabled: '', installed: '', notInstalled: '' };
     for (const config of this.getConfig()) {
       config.data.forEach((id) => {
-        if (this.extensionsManager.storage.isDisabled(id, refresh ? false : refresh)) {
+        if (this.extensionsManager.isDisabled(id, refresh ? false : refresh)) {
           message.disabled += `This extension id '${id}' is disabled!\n`;
         } else if (this.extensionsManager.isInstalled(id)) {
           message.installed += `This extension id '${id}' is installed!\n`;

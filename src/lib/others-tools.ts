@@ -1,7 +1,7 @@
 import { App } from '../app';
 import * as xlsx from 'xlsx';
-import { annotateName, NodeVscode } from 'node-vscode-utils';
 import { QuickPickItem } from 'vscode';
+import { annotateName, Generic, NodeVscode } from '../vendor/node-vscode-utils/src';
 
 
 export class OthersTools extends App {
@@ -19,6 +19,19 @@ export class OthersTools extends App {
         callback: {
           caller: this.convertXlsxToJson,
           isSync: false,
+          thisArg: this,
+        },
+      },
+      {
+        treeItem: {
+          label: 'Show Tips and My Default Profiles',
+          command: { command: this.getCommand('showtipsprofiles'), title: '' },
+        },
+        callback: {
+          caller: () => {
+            this.nodeVscode.fileSystem.showFilesMD(this.nodeVscode.fileSystem.resolvePath(this.directories.files + '/tips-profiles.md'));
+          },
+          isSync: true,
           thisArg: this,
         },
       },
@@ -42,7 +55,7 @@ export class OthersTools extends App {
           if (!selectedItem) {
             return;
           } else {
-            selectedItem = this.functions.convert<QuickPickItem>(selectedItem);
+            selectedItem = Generic.convert<QuickPickItem>(selectedItem);
             const ws = wb.Sheets[selectedItem.label];
             const data = xlsx.utils.sheet_to_json(ws);
             const tempFile = this.nodeVscode.fileSystem.createTempFile(fileInfo.basenameWithoutExtension + '.json');

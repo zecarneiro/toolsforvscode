@@ -1,6 +1,5 @@
-import { Console, ExtensionsManagerVs, Functions, ITreeItemExtend, ITreeItemWithChildren, Logger, NodeVscode, WindowManagerVs } from 'node-vscode-utils';
-import { ExtensionContext } from 'vscode';
 import { IDirectories } from './interface/directories';
+import { Console, ExtensionsManagerVs, Functions, ITreeItemExtend, ITreeItemWithChildren, Logger, NodeVscode, WindowManagerVs } from './vendor/node-vscode-utils/src';
 
 export abstract class App {
   protected currentMethod: string = '';
@@ -25,10 +24,6 @@ export abstract class App {
     this.nodeVscode.logger.class = undefined;
     this.nodeVscode.logger.method = this.currentMethod;
     return this.nodeVscode.logger;
-  }
-
-  protected get context(): ExtensionContext {
-    return this.nodeVscode.contextVs;
   }
 
   protected get extensionsManager(): ExtensionsManagerVs {
