@@ -1,5 +1,5 @@
 import { IDirectories } from './interface/directories';
-import { Console, ExtensionsManagerVs, Functions, ITreeItemExtend, ITreeItemWithChildren, Logger, NodeVscode, WindowManagerVs } from './vendor/node-vscode-utils/src';
+import { Console, EntityBaseName, ExtensionsManagerVs, Functions, ITreeItemExtend, ITreeItemWithChildren, Logger, NodeVs, WindowManagerVs } from './vendor/node-vscode-utils/src';
 
 export abstract class App {
   protected currentMethod: string = '';
@@ -14,15 +14,14 @@ export abstract class App {
   };
 
   constructor(
-        protected nodeVscode: NodeVscode,
-        protected extensionId: string,
-        protected activityBarId: string,
-        protected className: string,
-  ) {}
+    protected nodeVscode: NodeVs,
+    protected extensionId: string,
+    protected activityBarId: string,
+    protected className: string,
+  ) { }
 
   protected get logger(): Logger {
-    this.nodeVscode.logger.class = undefined;
-    this.nodeVscode.logger.method = this.currentMethod;
+    this.nodeVscode.logger.prefix = this.nodeVscode.logger.formatPrefix(this.className, this.currentMethod, true);
     return this.nodeVscode.logger;
   }
 
@@ -42,14 +41,17 @@ export abstract class App {
     return this.nodeVscode.functions;
   }
 
+  @EntityBaseName
   protected getSettings<T = any>(section?: string): T {
-    return this.extensionsManager.getExtensionSettings<T>(this.extensionId, section);
+    return ExtensionsManagerVs.getExtensionSettings<T>(this.extensionId, section);
   }
 
+  @EntityBaseName
   protected getCommand(name: string): string {
-    return `${this.extensionsManager.getExtensionInfo(this.extensionId).name}.${this.className}${name}`;
+    return `${ExtensionsManagerVs.getExtensionInfo(this.extensionId).name}.${this.className}${name}`;
   }
 
+  @EntityBaseName
   protected prepareAll(dataTreeItemVscodeCmd: ITreeItemWithChildren[] | ITreeItemExtend[]) {
     this.windowsManager.createActivityBar(dataTreeItemVscodeCmd, this.activityBarId);
   }

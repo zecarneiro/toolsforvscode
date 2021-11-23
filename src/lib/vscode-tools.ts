@@ -1,25 +1,14 @@
 import { App } from '../app';
-import { annotateName, ENotifyType, EShellType, NodeVscode } from '../vendor/node-vscode-utils/src';
+import { ECommandExecType, ENotifyType, EntityBaseName, ExtensionsManagerVs, FileSystem, NodeVs } from '../vendor/node-vscode-utils/src';
 
 
 export class VscodeTools extends App {
   constructor(
-    protected nodeVscode: NodeVscode,
+    protected nodeVs: NodeVs,
     protected extensionId: string,
   ) {
-    super(nodeVscode, extensionId, 'vscode-tools-jnoronha', 'VscodeTools');
+    super(nodeVs, extensionId, 'vscode-tools-jnoronha', 'VscodeTools');
     this.prepareAll([
-      {
-        treeItem: {
-          label: 'Restart VSCode',
-          command: { command: this.getCommand('reloadvscodeonprofilechange'), title: '' },
-        },
-        callback: {
-          caller: this.restartVScode,
-          isSync: true,
-          thisArg: this,
-        },
-      },
       {
         treeItem: {
           label: 'Create Extension',
@@ -37,10 +26,10 @@ export class VscodeTools extends App {
         },
         callback: {
           caller: () => {
-            this.nodeVscode.console.execSync({ cmd: 'npm install -g yo', successCode: 0 });
-            this.nodeVscode.console.execSync({ cmd: 'npm install -g typescript', successCode: 0 });
-            this.nodeVscode.console.execSync({ cmd: 'npm install -g yo generator-code', successCode: 0 });
-            this.nodeVscode.console.execSync({ cmd: 'npm install -g vsce', successCode: 0 });
+            this.nodeVs.console.exec({ cmd: 'npm install -g yo', typeExec: ECommandExecType.vscodeTerminal });
+            this.nodeVs.console.exec({ cmd: 'npm install -g typescript', typeExec: ECommandExecType.vscodeTerminal });
+            this.nodeVs.console.exec({ cmd: 'npm install -g yo generator-code', typeExec: ECommandExecType.vscodeTerminal });
+            this.nodeVs.console.exec({ cmd: 'npm install -g vsce', typeExec: ECommandExecType.vscodeTerminal });
           },
           isSync: false,
           thisArg: this,
@@ -71,20 +60,20 @@ export class VscodeTools extends App {
     this.windowsManager.createStatusBar({ text: 'Reload', command: 'workbench.action.reloadWindow', tooltip: 'Reload VSCode' });
   }
 
-  @annotateName
+  @EntityBaseName
   private async createNewExtensions() {
     const result = await this.windowsManager.showOpenDialog({ canSelectFolders: true });
     let path: string = result && result[0] && result[0]['path'] ? result[0]['path'] : '';
     if (path.length > 0) {
       path = this.nodeVscode.fileSystem.resolvePath(path);
-      this.nodeVscode.console.execSync({ cmd: 'yo code', cwd: path, successCode: 0 });
+      this.nodeVscode.console.exec({ cmd: 'yo code', cwd: path, typeExec: ECommandExecType.vscodeTerminal });
       this.logger.showOutputChannel();
     }
   }
 
-  @annotateName
+  @EntityBaseName
   private generateVsixPackages() {
-    const workspaceDir: string | undefined = this.extensionsManager.getWorkspaceRootPath();
+    const workspaceDir: string | undefined = ExtensionsManagerVs.getWorkspaceRootPath();
     if (workspaceDir && workspaceDir.length > 0) {
       const vscodeIgnoreFile = this.nodeVscode.fileSystem.resolvePath(workspaceDir + '/.vscodeignore');
       const vscodeIgnoreData: string[] = [
@@ -110,8 +99,8 @@ export class VscodeTools extends App {
       let dataToInsert: string = '';
       let isNewDataInserted = false;
 
-      if (this.nodeVscode.fileSystem.fileExist(vscodeIgnoreFile, false)) {
-        dataToInsert = this.nodeVscode.fileSystem.readDocument(vscodeIgnoreFile).trim();
+      if (FileSystem.fileExist(vscodeIgnoreFile, false)) {
+        dataToInsert = FileSystem.readDocument(vscodeIgnoreFile).trim();
       }
 
       vscodeIgnoreData.forEach((newData) => {
@@ -123,21 +112,12 @@ export class VscodeTools extends App {
 
       if (isNewDataInserted) {
         this.logger.notify('Write ' + vscodeIgnoreFile);
-        this.nodeVscode.fileSystem.writeDocument(vscodeIgnoreFile, dataToInsert);
+        FileSystem.writeDocument(vscodeIgnoreFile, dataToInsert);
       }
       this.logger.notify('Create package');
-      this.nodeVscode.console.exec({ cmd: 'vsce package', cwd: workspaceDir, successCode: 0 });
+      this.nodeVscode.console.exec({ cmd: 'vsce package', cwd: workspaceDir, typeExec: ECommandExecType.vscodeTerminal });
     } else {
       this.logger.notify('Invalid workspace directory', ENotifyType.error);
-    }
-  }
-
-  @annotateName
-  private restartVScode() {
-    if (this.nodeVscode.fileSystem.isWindows) {
-      this.nodeVscode.console.execSync({ cmd: `${this.scriptsToSystem.windows} -RELOAD_VSCODE_CHANGED_PROFILE 1`, shellType: EShellType.powershell });
-    } else {
-      this.logger.notify('Not implemented yet!!!');
     }
   }
 }

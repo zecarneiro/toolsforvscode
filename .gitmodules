@@ -1,4 +1,3 @@
-
 [submodule "src/vendor/node-vscode-utils"]
 	path = src/vendor/node-vscode-utils
 	url = https://github.com/zecarneiro/node-vscode-utils.git

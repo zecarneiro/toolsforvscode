@@ -6,7 +6,7 @@
 	"name": "toolsforvscode",
 	"displayName": "Tools for VSCode",
 	"description": "Collapse, Expand, Reload and Enable, Disable, Install and Uninstall Extensions",
-	"version": "3.1.1",
+	"version": "3.2.0",
 	"engines": {
 		"vscode": "^1.46.0"
 	},
@@ -14,7 +14,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"*"
+		"onStartupFinished"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
@@ -31,7 +31,7 @@
 				"toolsforvscode.sqlite-command": {
 					"title": "Sqlite Command",
 					"type": "string",
-					"default": "",
+					"default": null,
 					"description": "Sqlite command or executable file"
 				}
 			}
@@ -64,17 +64,17 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run package",
-		"compile": "node ./scripts/build.js build dev",
-		"package": "node ./scripts/build.js build prodution",
+		"compile": "npm run clean && node ./scripts/build.js build dev",
+		"package": "npm run clean && node ./scripts/build.js build prodution",
 		"watch": "tsc -watch -p tsconfig.json",
 		"pretest": "npm run compile",
 		"test": "node ./out/test/runTest.js",
 		"lint": "eslint src --ext ts,js",
-		"lint:fix": "npm run lint -- --fix"
+		"lint:fix": "npm run lint -- --fix",
+		"clean": "node ./scripts/build.js clean"
 	},
 	"files": [
 		"dist/**/*",
-		"scripts/**/*",
 		"images/**/*",
 		"files/**/*"
 	],

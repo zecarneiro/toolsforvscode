@@ -17,3 +17,4 @@ vsc-extension-quickstart.md
 webpack.config.js
 node_modules/**
 node-extension.webpack.config.js
+scripts/**

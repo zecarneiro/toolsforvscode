@@ -8,15 +8,14 @@
 		"lib": ["es2017", "es7", "es6", "dom"],
 		"sourceMap": true,
 		"strict": false,
-		"esModuleInterop": true
+		"esModuleInterop": true,
 	},
-	"include": ["src"],
+	"include": ["src/**/*.ts"],
 	"exclude": [
 		".vscode-test",
 		"files",
 		"scripts",
 		"node_modules",
-		"vendor",
 		"src/test"
 	]
 }

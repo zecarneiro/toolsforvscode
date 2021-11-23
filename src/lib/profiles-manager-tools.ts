@@ -1,7 +1,7 @@
 import { QuickPickItem, workspace } from 'vscode';
 import { App } from '../app';
 import { IProfiles } from '../interface/profiles';
-import { annotateName, Generic, NodeVscode } from '../vendor/node-vscode-utils/src';
+import { EntityBaseName, Functions, NodeVs } from '../vendor/node-vscode-utils/src';
 
 export class ProfilesManagerTools extends App {
   private profilesData: IProfiles[] = [];
@@ -13,7 +13,7 @@ export class ProfilesManagerTools extends App {
   private readonly config = 'profiles';
 
   constructor(
-    protected nodeVscode: NodeVscode,
+    protected nodeVscode: NodeVs,
     protected extensionId: string,
   ) {
     super(nodeVscode, extensionId, 'profiles-manager-tools-jnoronha', 'ProfilesManagerTools');
@@ -82,7 +82,7 @@ export class ProfilesManagerTools extends App {
     return profileConfig ? profileConfig : [];
   }
 
-  @annotateName
+  @EntityBaseName
   private prepareProfiles() {
     let immutableIds: string[] = [];
     this.getConfig().forEach((profiles) => {
@@ -92,11 +92,11 @@ export class ProfilesManagerTools extends App {
         this.profilesData.push(profiles);
       }
     });
-    this.extensionsManager.immutableNoDisableIds = immutableIds;
+    this.extensionsManager.immutableIds = immutableIds;
     this.extensionsManager.enableImmutable();
   }
 
-  @annotateName
+  @EntityBaseName
   private disableExtensions(profiles: string[]) {
     let ids: string[] = [];
     for (const profile of this.profilesData) {
@@ -108,9 +108,9 @@ export class ProfilesManagerTools extends App {
     this.logger.showOutputChannel();
   }
 
-  @annotateName
+  @EntityBaseName
   private createMenu() {
-    const disabledExtension = this.extensionsManager.getAllDisabled();
+    const disabledExtension = this.extensionsManager.getDisabled();
     if (disabledExtension.hasError) {
       this.logger.error(disabledExtension.error?.message);
       return;
@@ -125,7 +125,7 @@ export class ProfilesManagerTools extends App {
       if (!selectedItems) {
         return;
       } else {
-        const selected = Generic.convert<QuickPickItem[]>(selectedItems);
+        const selected = Functions.convert<QuickPickItem[]>(selectedItems);
         const profile: string[] = this.profilesData.map((profileData) => {
           if (!profileData.hide && selected.findIndex((x) => x.label === profileData.name) < 0) {
             return profileData.name;
@@ -140,7 +140,7 @@ export class ProfilesManagerTools extends App {
   /** *****************************************************
    * Install/Uninstall Area
    ******************************************************/
-  @annotateName
+  @EntityBaseName
   private InstallUninstallExt(isInstall: boolean) {
     const ids: string[] = [];
     const profileConfig = this.getSettings<IProfiles[]>(this.config);
@@ -160,13 +160,12 @@ export class ProfilesManagerTools extends App {
     }
   }
 
-  @annotateName
+  @EntityBaseName
   private showStatus() {
-    const refresh = true;
     const message = { disabled: '', installed: '', notInstalled: '' };
     for (const config of this.getConfig()) {
       config.data.forEach((id) => {
-        if (this.extensionsManager.isDisabled(id, refresh ? false : refresh)) {
+        if (this.extensionsManager.isDisabled(id)) {
           message.disabled += `This extension id '${id}' is disabled!\n`;
         } else if (this.extensionsManager.isInstalled(id)) {
           message.installed += `This extension id '${id}' is installed!\n`;

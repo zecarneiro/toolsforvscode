@@ -78,7 +78,9 @@
 			"stylelint.vscode-stylelint",
 			"usernamehw.errorlens",
             "hediet.debug-visualizer",
-            "formulahendry.code-runner"
+            "formulahendry.code-runner",
+            "streetsidesoftware.code-spell-checker",
+            "kiteco.kite"
         ]
     },
     {
@@ -307,7 +309,8 @@
             "vscjava.vscode-java-debug",
             "vscjava.vscode-java-test",
             "ithildir.java-properties",
-            "dgileadi.java-decompiler"
+            "dgileadi.java-decompiler",
+            "vscjava.vscode-java-dependency"
         ]
     },
     {

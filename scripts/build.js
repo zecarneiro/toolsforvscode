@@ -18,11 +18,6 @@ yargs(hideBin(process.argv))
       });
     },
     handler: (argv) => {
-      const distDir = './dist';
-      if (fse.existsSync(distDir)) {
-        console.log('> Clean dist directory');
-        fse.rmdirSync(distDir, { recursive: true });
-      }
       const options = { stdio: 'inherit', shell: true };
       childProcess.spawnSync('npm', ['run', 'lint:fix'], options);
       if (argv.mode === 'prodution') {
@@ -41,5 +36,15 @@ yargs(hideBin(process.argv))
         childProcess.spawnSync('tsc', ['-p', 'tsconfig.json'], options);
       }
     },
+  })
+  .command({
+    command: 'clean',
+    handler: () => {
+      const distDir = './dist';
+      if (fse.existsSync(distDir)) {
+        console.log('> Clean dist directory');
+        fse.rmdirSync(distDir, { recursive: true });
+      }
+    }
   })
   .parse();
