@@ -20,7 +20,7 @@ With this extension, you can:
 ```json
 [
     {
-        "name": "Profile Name Example",
+        "name": "Hide Profile Name Example",
         // "hide" key is optional
         // When set true, this profile not appear on profile menu
         // All extensions on this profile will be always enabled
@@ -31,11 +31,23 @@ With this extension, you can:
             ...
         ]
     },
+    {
+        "name": "Profile Name Example",
+        "data": [
+            "extension-id-3",
+            "extension-id-4",
+            ...
+        ]
+    },
     ...
 ]
 ```
 
 ![Profiles](files/readme-files/profiles.gif)
+
+`IMPORTANT`:
+- After installing this extension, go to profiles and enable/disable defined profiles to update active/disabled extensions
+- After disable/enable extensions, `restart` vscode
 
 - Install/Uninstall
 

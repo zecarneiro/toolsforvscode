@@ -1,5 +1,5 @@
 import { App } from '../app';
-import { ECommandExecType, ENotifyType, EntityBaseName, ExtensionsManagerVs, FileSystem, NodeVs } from '../vendor/node-vscode-utils/src';
+import { ECommandExecType, ENotifyType, FileSystem, NodeVs, VsExtensionsManager } from '../vendor/node-vscode-utils/src';
 
 
 export class VscodeTools extends App {
@@ -26,10 +26,10 @@ export class VscodeTools extends App {
         },
         callback: {
           caller: () => {
-            this.nodeVs.console.exec({ cmd: 'npm install -g yo', typeExec: ECommandExecType.vscodeTerminal });
-            this.nodeVs.console.exec({ cmd: 'npm install -g typescript', typeExec: ECommandExecType.vscodeTerminal });
-            this.nodeVs.console.exec({ cmd: 'npm install -g yo generator-code', typeExec: ECommandExecType.vscodeTerminal });
-            this.nodeVs.console.exec({ cmd: 'npm install -g vsce', typeExec: ECommandExecType.vscodeTerminal });
+            this.nodeVs.vsConsole.exec({ cmd: 'npm install -g yo', typeExec: ECommandExecType.none });
+            this.nodeVs.vsConsole.exec({ cmd: 'npm install -g typescript', typeExec: ECommandExecType.none });
+            this.nodeVs.vsConsole.exec({ cmd: 'npm install -g yo generator-code', typeExec: ECommandExecType.none });
+            this.nodeVs.vsConsole.exec({ cmd: 'npm install -g vsce', typeExec: ECommandExecType.none });
           },
           isSync: false,
           thisArg: this,
@@ -49,33 +49,31 @@ export class VscodeTools extends App {
     ]);
 
     // Create and show collapse/expand all statusbar for extension
-    this.windowsManager.createStatusBar({ text: '$(collapse-all)', command: 'editor.foldAll', tooltip: 'Collapse All' });
-    this.windowsManager.createStatusBar({ text: '$(expand-all)', command: 'editor.unfoldAll', tooltip: 'Expand All' });
+    this.nodeVs.vsWindowsManager.createStatusBar({ text: '$(collapse-all)', command: 'editor.foldAll', tooltip: 'Collapse All' });
+    this.nodeVs.vsWindowsManager.createStatusBar({ text: '$(expand-all)', command: 'editor.unfoldAll', tooltip: 'Expand All' });
 
     // Create and show collapse/expand region statusbar for extension
-    this.windowsManager.createStatusBar({ text: '$(fold-up)', command: 'editor.foldRecursively', tooltip: 'Collapse Recursive By Cursor' });
-    this.windowsManager.createStatusBar({ text: '$(fold-down)', command: 'editor.unfoldRecursively', tooltip: 'Expand Recursive By Cursor' });
+    this.nodeVs.vsWindowsManager.createStatusBar({ text: '$(fold-up)', command: 'editor.foldRecursively', tooltip: 'Collapse Recursive By Cursor' });
+    this.nodeVs.vsWindowsManager.createStatusBar({ text: '$(fold-down)', command: 'editor.unfoldRecursively', tooltip: 'Expand Recursive By Cursor' });
 
     // Reload
-    this.windowsManager.createStatusBar({ text: 'Reload', command: 'workbench.action.reloadWindow', tooltip: 'Reload VSCode' });
+    this.nodeVs.vsWindowsManager.createStatusBar({ text: 'Reload', command: 'workbench.action.reloadWindow', tooltip: 'Reload VSCode' });
   }
 
-  @EntityBaseName
   private async createNewExtensions() {
-    const result = await this.windowsManager.showOpenDialog({ canSelectFolders: true });
+    const result = await this.nodeVs.vsWindowsManager.showOpenDialog({ canSelectFolders: true });
     let path: string = result && result[0] && result[0]['path'] ? result[0]['path'] : '';
     if (path.length > 0) {
-      path = this.nodeVscode.fileSystem.resolvePath(path);
-      this.nodeVscode.console.exec({ cmd: 'yo code', cwd: path, typeExec: ECommandExecType.vscodeTerminal });
+      path = this.nodeVs.fileSystem.resolvePath(path);
+      this.nodeVs.vsConsole.exec({ cmd: 'yo code', cwd: path, typeExec: ECommandExecType.none });
       this.logger.showOutputChannel();
     }
   }
 
-  @EntityBaseName
   private generateVsixPackages() {
-    const workspaceDir: string | undefined = ExtensionsManagerVs.getWorkspaceRootPath();
+    const workspaceDir: string | undefined = VsExtensionsManager.getWorkspaceRootPath();
     if (workspaceDir && workspaceDir.length > 0) {
-      const vscodeIgnoreFile = this.nodeVscode.fileSystem.resolvePath(workspaceDir + '/.vscodeignore');
+      const vscodeIgnoreFile = this.nodeVs.fileSystem.resolvePath(workspaceDir + '/.vscodeignore');
       const vscodeIgnoreData: string[] = [
         '.vscode/**',
         '.vscode-test/**',
@@ -115,7 +113,7 @@ export class VscodeTools extends App {
         FileSystem.writeDocument(vscodeIgnoreFile, dataToInsert);
       }
       this.logger.notify('Create package');
-      this.nodeVscode.console.exec({ cmd: 'vsce package', cwd: workspaceDir, typeExec: ECommandExecType.vscodeTerminal });
+      this.nodeVs.vsConsole.exec({ cmd: 'vsce package', cwd: workspaceDir, typeExec: ECommandExecType.none });
     } else {
       this.logger.notify('Invalid workspace directory', ENotifyType.error);
     }

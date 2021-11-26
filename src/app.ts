@@ -1,58 +1,42 @@
 import { IDirectories } from './interface/directories';
-import { Console, EntityBaseName, ExtensionsManagerVs, Functions, ITreeItemExtend, ITreeItemWithChildren, Logger, NodeVs, WindowManagerVs } from './vendor/node-vscode-utils/src';
+import { EntityBaseName, ITreeItemExtend, ITreeItemWithChildren, Logger, NodeVs, VsExtensionsManager } from './vendor/node-vscode-utils/src';
 
 export abstract class App {
   protected currentMethod: string = '';
-  protected readonly extensionPath: string = this.nodeVscode.fileSystem.resolvePath(this.nodeVscode.extensionsManagerVs.getPath() + '/dist');
+  protected readonly extensionPath: string = this.nodeVs.fileSystem.resolvePath(this.nodeVs.vsExtensionsManager.getPath() + '/dist');
   protected readonly directories: IDirectories = {
-    files: this.nodeVscode.fileSystem.resolvePath(this.extensionPath + '/../files'),
-    scripts: this.nodeVscode.fileSystem.resolvePath(this.extensionPath + '/../scripts'),
+    files: this.nodeVs.fileSystem.resolvePath(this.extensionPath + '/../files'),
+    scripts: this.nodeVs.fileSystem.resolvePath(this.extensionPath + '/../scripts'),
   };
   protected readonly scriptsToSystem = {
-    linux: this.nodeVscode.fileSystem.resolvePath(this.directories.scripts + '/to-linux.sh'),
-    windows: this.nodeVscode.fileSystem.resolvePath(this.directories.scripts + '/to-windows.ps1'),
+    linux: this.nodeVs.fileSystem.resolvePath(this.directories.scripts + '/to-linux.sh'),
+    windows: this.nodeVs.fileSystem.resolvePath(this.directories.scripts + '/to-windows.ps1'),
   };
 
   constructor(
-    protected nodeVscode: NodeVs,
+    protected nodeVs: NodeVs,
     protected extensionId: string,
     protected activityBarId: string,
     protected className: string,
   ) { }
 
   protected get logger(): Logger {
-    this.nodeVscode.logger.prefix = this.nodeVscode.logger.formatPrefix(this.className, this.currentMethod, true);
-    return this.nodeVscode.logger;
-  }
-
-  protected get extensionsManager(): ExtensionsManagerVs {
-    return this.nodeVscode.extensionsManagerVs;
-  }
-
-  protected get console(): Console {
-    return this.nodeVscode.console;
-  }
-
-  protected get windowsManager(): WindowManagerVs {
-    return this.nodeVscode.windowsManagerVs;
-  }
-
-  protected get functions(): Functions {
-    return this.nodeVscode.functions;
+    this.nodeVs.logger.prefix = this.nodeVs.logger.formatPrefix(this.className, this.currentMethod, true);
+    return this.nodeVs.logger;
   }
 
   @EntityBaseName
   protected getSettings<T = any>(section?: string): T {
-    return ExtensionsManagerVs.getExtensionSettings<T>(this.extensionId, section);
+    return VsExtensionsManager.getExtensionSettings<T>(this.extensionId, section);
   }
 
   @EntityBaseName
   protected getCommand(name: string): string {
-    return `${ExtensionsManagerVs.getExtensionInfo(this.extensionId).name}.${this.className}${name}`;
+    return `${VsExtensionsManager.getExtensionInfo(this.extensionId).name}.${this.className}${name}`;
   }
 
   @EntityBaseName
   protected prepareAll(dataTreeItemVscodeCmd: ITreeItemWithChildren[] | ITreeItemExtend[]) {
-    this.windowsManager.createActivityBar(dataTreeItemVscodeCmd, this.activityBarId);
+    this.nodeVs.vsWindowsManager.createActivityBar(dataTreeItemVscodeCmd, this.activityBarId);
   }
 }

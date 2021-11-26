@@ -2,7 +2,7 @@ import { OthersTools } from './lib/others-tools';
 import { VscodeTools } from './lib/vscode-tools';
 import { ProfilesManagerTools } from './lib/profiles-manager-tools';
 import * as vscode from 'vscode';
-import { ETypeUtils, ExtensionsManagerVs, NodeVs } from './vendor/node-vscode-utils/src';
+import { ETypeUtils, NodeVs, VsExtensionsManager } from './vendor/node-vscode-utils/src';
 
 const id = 'jnoronha.toolsforvscode';
 const extensionName = 'Tools For VSCode';
@@ -28,7 +28,7 @@ function init(nodeVs: NodeVs, type: number) {
 }
 
 function setCustomConfig(nodeVs: NodeVs) {
-  nodeVs.sqlite.command = ExtensionsManagerVs.getExtensionSettings<string>(id, 'sqlite-command');
+  nodeVs.sqlite.command = VsExtensionsManager.getExtensionSettings<string>(id, 'sqlite-command');
 }
 
 export function activate(context: vscode.ExtensionContext) {

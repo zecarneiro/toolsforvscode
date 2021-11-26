@@ -1,7 +1,7 @@
 import { App } from '../app';
 import * as xlsx from 'xlsx';
 import { QuickPickItem } from 'vscode';
-import { EntityBaseName, FileSystem, Functions, NodeVs } from '../vendor/node-vscode-utils/src';
+import { FileSystem, Functions, NodeVs } from '../vendor/node-vscode-utils/src';
 
 
 export class OthersTools extends App {
@@ -29,7 +29,7 @@ export class OthersTools extends App {
         },
         callback: {
           caller: () => {
-            this.nodeVscode.fileSystem.showFilesMD(this.nodeVscode.fileSystem.resolvePath(this.directories.files + '/tips-profiles.md'));
+            this.nodeVs.fileSystem.showFilesMD(this.nodeVs.fileSystem.resolvePath(this.directories.files + '/tips-profiles.md'));
           },
           isSync: true,
           thisArg: this,
@@ -38,19 +38,18 @@ export class OthersTools extends App {
     ]);
   }
 
-  @EntityBaseName
   private async convertXlsxToJson() {
-    const result = await this.windowsManager.showOpenDialog({ canSelectFiles: true });
+    const result = await this.nodeVs.vsWindowsManager.showOpenDialog({ canSelectFiles: true });
     let file: string = result && result[0] && result[0]['path'] ? result[0]['path'] : '';
-    file = this.nodeVscode.fileSystem.resolvePath(file);
+    file = this.nodeVs.fileSystem.resolvePath(file);
     if (file.length > 0 && FileSystem.fileExist(file)) {
-      const fileInfo = this.nodeVscode.fileSystem.getFileInfo(file);
+      const fileInfo = this.nodeVs.fileSystem.getFileInfo(file);
       const wb = xlsx.readFile(file);
       if (wb.SheetNames && wb.SheetNames.length > 0) {
         const items: QuickPickItem[] = wb.SheetNames.map<QuickPickItem>((name) => {
           return { label: name, picked: false };
         });
-        this.windowsManager.createQuickPick(items, { canPickMany: false }).then((selectedItem) => {
+        this.nodeVs.vsWindowsManager.createQuickPick(items, { canPickMany: false }).then((selectedItem) => {
           // User made final selection
           if (!selectedItem) {
             return;
@@ -58,9 +57,9 @@ export class OthersTools extends App {
             selectedItem.data = Functions.convert<QuickPickItem>(selectedItem.data);
             const ws = wb.Sheets[selectedItem.data.label];
             const data = xlsx.utils.sheet_to_json(ws);
-            const tempFile = this.nodeVscode.fileSystem.createTempFile(fileInfo.basenameWithoutExtension + '.json');
+            const tempFile = this.nodeVs.fileSystem.createTempFile(fileInfo.basenameWithoutExtension + '.json');
             FileSystem.writeJsonFile(tempFile, data);
-            this.nodeVscode.fileSystem.showTextDocument(tempFile);
+            this.nodeVs.fileSystem.showTextDocument(tempFile);
           }
         });
       } else {
