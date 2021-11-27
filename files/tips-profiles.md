@@ -41,7 +41,6 @@
         "hide": true,
         "data": [
             "gruntfuggly.todo-tree",
-            "vscode-icons-team.vscode-icons",
             "CoenraadS.bracket-pair-colorizer",
             "alefragnani.project-manager",
             "alefragnani.Bookmarks",
@@ -51,14 +50,21 @@
             "wayou.vscode-todo-highlight",
             "IBM.output-colorizer",
             "formulahendry.terminal",
-            "zhuangtongfa.Material-theme",
-			"orepor.color-tabs-vscode-ext",
-			"ryu1kn.partial-diff",
-			"BriteSnow.vscode-toggle-quotes",
-			"wwm.better-align",
-			"Rubymaniac.vscode-paste-and-indent",
+            "ryu1kn.partial-diff",
+            "BriteSnow.vscode-toggle-quotes",
+            "wwm.better-align",
+            "Rubymaniac.vscode-paste-and-indent",
             "mkxml.vscode-filesize",
             "ms-devlabs.extension-manifest-editor"
+        ]
+    },
+    {
+        "name": "Themes",
+        "hide": true,
+        "data": [
+            "rokoroku.vscode-theme-darcula",
+            "vscode-icons-team.vscode-icons",
+            "orepor.color-tabs-vscode-ext"
         ]
     },
     {
@@ -73,74 +79,96 @@
             "rpinski.shebang-snippets",
             "SonarSource.sonarlint-vscode",
             "chrmarti.regex",
-			"DominicVonk.parameter-hints",
-			"vincaslt.highlight-matching-tag",
-			"stylelint.vscode-stylelint",
-			"usernamehw.errorlens",
+            "DominicVonk.parameter-hints",
+            "vincaslt.highlight-matching-tag",
+            "stylelint.vscode-stylelint",
+            "usernamehw.errorlens",
             "hediet.debug-visualizer",
-            "formulahendry.code-runner",
-            "streetsidesoftware.code-spell-checker",
-            "kiteco.kite"
+            "formulahendry.code-runner"
         ]
     },
     {
         "name": "Multi-Profile Dependencies",
         "hide": true,
         "data": [
-            "Pivotal.vscode-manifest-yaml", // Spring/YML
-            "pivotal.vscode-concourse" // Spring/CI-CD - For CI/CD
+            "Pivotal.vscode-manifest-yaml", // Spring, YML
+            "pivotal.vscode-concourse", // Spring, CI-CD
+            "redhat.vscode-yaml" // XML/HTML, OpenAPI
         ]
     },
     {
         "name": "Git/CI-CD",
         "data": [
             "eamodio.gitlens",
-			"rubbersheep.gi"
+            "rubbersheep.gi"
         ]
     },
-	{
-		"name": "Markdown",
-		"data":["yzhang.markdown-all-in-one"]
-	},
+    {
+        "name": "Markdown",
+        "data": [
+            "yzhang.markdown-all-in-one",
+            "xuzn.pikchr-markdown-preview"
+        ]
+    },
     {
         "name": "WSL",
-        "data": ["ms-vscode-remote.remote-wsl"]
+        "data": [
+            "ms-vscode-remote.remote-wsl"
+        ]
     },
     {
         "name": "Server Connection",
-        "data": ["liximomo.sftp"]
+        "data": [
+            "liximomo.sftp"
+        ]
     },
     {
         "name": "Latex",
-        "data": ["torn4dom4n.latex-support"]
+        "data": [
+            "torn4dom4n.latex-support"
+        ]
     },
     {
         "name": "JSON",
-        "data": ["nickdemayo.vscode-json-editor"]
+        "data": [
+            "nickdemayo.vscode-json-editor"
+        ]
     },
     {
         "name": "ASCIIDOC",
-        "data": ["asciidoctor.asciidoctor-vscode"]
+        "data": [
+            "asciidoctor.asciidoctor-vscode"
+        ]
     },
     {
         "name": "OpenAPI",
-        "data": ["42Crunch.vscode-openapi"]
+        "data": [
+            "42Crunch.vscode-openapi"
+        ]
     },
     {
         "name": "Excel",
-        "data": ["GrapeCity.gc-excelviewer"]
+        "data": [
+            "GrapeCity.gc-excelviewer"
+        ]
     },
     {
         "name": "UML",
-        "data": ["jebbs.plantuml"]
+        "data": [
+            "jebbs.plantuml"
+        ]
     },
     {
         "name": "Drawio",
-        "data": ["hediet.vscode-drawio"]
+        "data": [
+            "hediet.vscode-drawio"
+        ]
     },
     {
         "name": "CSV",
-        "data": ["mechatroner.rainbow-csv"]
+        "data": [
+            "mechatroner.rainbow-csv"
+        ]
     },
     {
         "name": "Docker",
@@ -160,12 +188,15 @@
         "name": "React",
         "data": [
             "dsznajder.es7-react-js-snippets",
-            "msjsdiag.vscode-react-native"
+            "msjsdiag.vscode-react-native",
+            "team-sapling.sapling"
         ]
     },
     {
         "name": "VueJS",
-        "data": ["octref.vetur"]
+        "data": [
+            "octref.vetur"
+        ]
     },
     {
         "name": "Python",
@@ -201,13 +232,12 @@
             "neilbrayfield.php-docblocker",
             "rexshi.phpdoc-comment-vscode-plugin",
             "felixfbecker.php-debug",
-			"rifi2k.format-html-in-php",
-			"junstyle.php-cs-fixer",
-			"ikappas.phpcs",
-			"kokororin.vscode-phpfmt",
-			"ikappas.composer",
-            "robberphex.php-debug",
-            "DEVSENSE.phptools-vscode"
+            "rifi2k.format-html-in-php",
+            "junstyle.php-cs-fixer",
+            "ikappas.phpcs",
+            "kokororin.vscode-phpfmt",
+            "ikappas.composer",
+            "robberphex.php-debug"
         ]
     },
     {
@@ -220,14 +250,15 @@
             "dbaeumer.vscode-eslint",
             "stevencl.adddoccomments",
             "NicholasHsiang.vscode-javascript-comment",
-			"rbbit.typescript-hero",
-			"lannonbr.vscode-js-annotations",
-			"tusaeff.vscode-typescript-destructure-plugin",
-			"dotup.dotup-vscode-interface-generator",
-			"vilicvane.es-quotes",
+            "rbbit.typescript-hero",
+            "lannonbr.vscode-js-annotations",
+            "tusaeff.vscode-typescript-destructure-plugin",
+            "dotup.dotup-vscode-interface-generator",
+            "vilicvane.es-quotes",
             "wallabyjs.quokka-vscode",
             "mikehanson.auto-barrel",
-            "idered.npm"
+            "idered.npm",
+            "juanallo.vscode-dependency-cruiser"
         ]
     },
     {
@@ -239,12 +270,14 @@
             "rogalmic.bash-debug",
             "rogalmic.ksh-debug",
             "timonwong.shellcheck",
-			"truman.autocomplate-shell"
+            "truman.autocomplate-shell"
         ]
     },
     {
         "name": "Power Shell",
-        "data": ["ms-vscode.powershell"]
+        "data": [
+            "ms-vscode.powershell"
+        ]
     },
     {
         "name": "XML/HTML",
@@ -255,7 +288,6 @@
             "formulahendry.auto-close-tag",
             "abusaidm.html-snippets",
             "redhat.vscode-xml",
-            "redhat.vscode-yaml",
             "formulahendry.auto-rename-tag",
             "fabianlauer.vs-code-xml-format"
         ]
@@ -265,14 +297,16 @@
         "data": [
             "sporiley.css-auto-prefix",
             "michelemelluso.code-beautifier",
-			"pranaygp.vscode-css-peek",
-			"mrmlnc.vscode-autoprefixer"
+            "pranaygp.vscode-css-peek",
+            "mrmlnc.vscode-autoprefixer"
         ]
     },
-	{
-		"name": "Azure",
-		"data": ["bencoleman.armview"]
-	},
+    {
+        "name": "Azure",
+        "data": [
+            "bencoleman.armview"
+        ]
+    },
     {
         "name": "C#/.Net",
         "data": [
@@ -309,8 +343,7 @@
             "vscjava.vscode-java-debug",
             "vscjava.vscode-java-test",
             "ithildir.java-properties",
-            "dgileadi.java-decompiler",
-            "vscjava.vscode-java-dependency"
+            "dgileadi.java-decompiler"
         ]
     },
     {

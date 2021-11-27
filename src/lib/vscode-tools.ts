@@ -1,3 +1,4 @@
+import { Uri } from 'vscode';
 import { App } from '../app';
 import { ECommandExecType, ENotifyType, FileSystem, NodeVs, VsExtensionsManager } from '../vendor/node-vscode-utils/src';
 
@@ -61,16 +62,16 @@ export class VscodeTools extends App {
   }
 
   private async createNewExtensions() {
-    const result = await this.nodeVs.vsWindowsManager.showOpenDialog({ canSelectFolders: true });
-    let path: string = result && result[0] && result[0]['path'] ? result[0]['path'] : '';
+    const result = await this.nodeVs.vsWindowsManager.showOpenDialog<Uri>({ canSelectFolders: true });
+    let path: string = result ? result['path'] : '';
     if (path.length > 0) {
       path = this.nodeVs.fileSystem.resolvePath(path);
       this.nodeVs.vsConsole.exec({ cmd: 'yo code', cwd: path, typeExec: ECommandExecType.none });
-      this.logger.showOutputChannel();
     }
   }
 
   private generateVsixPackages() {
+    this.nodeVs.vsWindowsManager.showProcessingMsg();
     const workspaceDir: string | undefined = VsExtensionsManager.getWorkspaceRootPath();
     if (workspaceDir && workspaceDir.length > 0) {
       const vscodeIgnoreFile = this.nodeVs.fileSystem.resolvePath(workspaceDir + '/.vscodeignore');

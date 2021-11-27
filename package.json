@@ -6,7 +6,7 @@
 	"name": "toolsforvscode",
 	"displayName": "Tools for VSCode",
 	"description": "Collapse, Expand, Reload and Enable, Disable, Install and Uninstall Extensions",
-	"version": "3.2.1",
+	"version": "3.2.2",
 	"engines": {
 		"vscode": "^1.46.0"
 	},
@@ -113,5 +113,6 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/zecarneiro/toolsforvscode"
-	}
+	},
+	"license": "MIT"
 }

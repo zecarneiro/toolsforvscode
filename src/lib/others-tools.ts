@@ -1,7 +1,7 @@
 import { App } from '../app';
 import * as xlsx from 'xlsx';
-import { QuickPickItem } from 'vscode';
-import { FileSystem, Functions, NodeVs } from '../vendor/node-vscode-utils/src';
+import { QuickPickItem, Uri } from 'vscode';
+import { FileSystem, NodeVs } from '../vendor/node-vscode-utils/src';
 
 
 export class OthersTools extends App {
@@ -39,32 +39,36 @@ export class OthersTools extends App {
   }
 
   private async convertXlsxToJson() {
-    const result = await this.nodeVs.vsWindowsManager.showOpenDialog({ canSelectFiles: true });
-    let file: string = result && result[0] && result[0]['path'] ? result[0]['path'] : '';
-    file = this.nodeVs.fileSystem.resolvePath(file);
-    if (file.length > 0 && FileSystem.fileExist(file)) {
-      const fileInfo = this.nodeVs.fileSystem.getFileInfo(file);
-      const wb = xlsx.readFile(file);
+    const showError = (msg: string) => {
+      this.logger.showOutputChannel();
+      this.logger.error(msg);
+    };
+    const result = await this.nodeVs.vsWindowsManager.showOpenDialog<Uri>({ canSelectFiles: true });
+    const fileInfo = this.nodeVs.fileSystem.getFileInfo(result ? result.path : '');
+    const validExtension = ['.xlsx', '.xlsm', '.csv'];
+    if (!fileInfo.hasError && validExtension.includes(fileInfo.data.extension)) {
+      const wb = xlsx.readFile(fileInfo.data.filename);
       if (wb.SheetNames && wb.SheetNames.length > 0) {
         const items: QuickPickItem[] = wb.SheetNames.map<QuickPickItem>((name) => {
           return { label: name, picked: false };
         });
-        this.nodeVs.vsWindowsManager.createQuickPick(items, { canPickMany: false }).then((selectedItem) => {
+        this.nodeVs.vsWindowsManager.createQuickPick<QuickPickItem>(items, { canPickMany: false }).then((selectedItem) => {
           // User made final selection
           if (!selectedItem) {
             return;
           } else {
-            selectedItem.data = Functions.convert<QuickPickItem>(selectedItem.data);
-            const ws = wb.Sheets[selectedItem.data.label];
+            const ws = wb.Sheets[selectedItem.label];
             const data = xlsx.utils.sheet_to_json(ws);
-            const tempFile = this.nodeVs.fileSystem.createTempFile(fileInfo.basenameWithoutExtension + '.json');
+            const tempFile = this.nodeVs.fileSystem.createTempFile(fileInfo.data.basenameWithoutExtension + '.json');
             FileSystem.writeJsonFile(tempFile, data);
             this.nodeVs.fileSystem.showTextDocument(tempFile);
           }
         });
       } else {
-        this.logger.error('This file: ' + fileInfo.basename + ' doesn\'t have any sheet');
+        showError('This file: ' + fileInfo.data.basename + ' doesn\'t have any sheet');
       }
+    } else {
+      showError('Invalid file: ' + fileInfo.data.filename);
     }
   }
 }

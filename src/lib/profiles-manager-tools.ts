@@ -1,7 +1,7 @@
 import { QuickPickItem, workspace } from 'vscode';
 import { App } from '../app';
 import { IProfiles } from '../interface/profiles';
-import { Functions, NodeVs } from '../vendor/node-vscode-utils/src';
+import { NodeVs } from '../vendor/node-vscode-utils/src';
 
 export class ProfilesManagerTools extends App {
   private profilesData: IProfiles[] = [];
@@ -111,22 +111,22 @@ export class ProfilesManagerTools extends App {
       });
       items.push({ label: element.name, picked: canPicked });
     });
-    this.nodeVs.vsWindowsManager.createQuickPick(items, { canPickMany: true }).then((selectedItems) => {
+    this.nodeVs.vsWindowsManager.createQuickPick<QuickPickItem[]>(items, { canPickMany: true }).then((selectedItems) => {
       // User made final selection
       if (!selectedItems) {
         return;
       } else {
+        this.nodeVs.vsWindowsManager.showProcessingMsg();
         let ids: string[] = [];
-        const selected = Functions.convert<QuickPickItem[]>(selectedItems.data);
         for (const profile of this.profilesData) {
-          if (!selected.find((val) => val.label === profile.name) && !profile.hide) {
+          if (!selectedItems.find((val) => val.label === profile.name) && !profile.hide) {
             ids = ids.concat(profile.data);
           }
         }
         const response = this.nodeVs.vsExtensionsManager.disable(ids);
         if (response.hasError) {
-          this.logger.error(response.error);
           this.logger.showOutputChannel();
+          this.logger.error(response.error);
         } else {
           this.nodeVs.vsExtensionsManager.showSuccessMsg();
         }
@@ -140,7 +140,7 @@ export class ProfilesManagerTools extends App {
       prompt: 'Insert time refresh in minutes',
       value: this.nodeVs.vsExtensionsManager.refreshTime.toString(),
     }).then((res) => {
-      this.nodeVs.vsExtensionsManager.refreshTime = parseInt(res.data);
+      this.nodeVs.vsExtensionsManager.refreshTime = parseInt(res);
     });
   }
 
@@ -149,6 +149,7 @@ export class ProfilesManagerTools extends App {
    * Install/Uninstall Area
    ******************************************************/
   private InstallUninstallExt(isInstall: boolean) {
+    this.nodeVs.vsWindowsManager.showProcessingMsg();
     const ids: string[] = [];
     const profileConfig = this.getSettings<IProfiles[]>(this.config);
     if (profileConfig && profileConfig.length > 0) {
@@ -159,6 +160,7 @@ export class ProfilesManagerTools extends App {
           }
         }
       }
+      this.logger.showOutputChannel();
       if (isInstall) {
         this.nodeVs.vsExtensionsManager.installExtensions(ids);
       } else {
@@ -172,14 +174,15 @@ export class ProfilesManagerTools extends App {
     for (const config of this.getConfig()) {
       config.data.forEach((id) => {
         if (this.nodeVs.vsExtensionsManager.isDisabled(id)) {
-          message.disabled += `This extension id '${id}' is disabled!\n`;
+          message.disabled += `Extension id: '${id}' is disabled!\n`;
         } else if (this.nodeVs.vsExtensionsManager.isInstalled(id)) {
-          message.installed += `This extension id '${id}' is installed!\n`;
+          message.installed += `Extension id: '${id}' is installed!\n`;
         } else {
-          message.notInstalled += `This extension id '${id}' is 'not installed'!\n`;
+          message.notInstalled += `Extension id: '${id}' is 'not installed'!\n`;
         }
       });
     }
+    this.logger.showOutputChannel();
     if (message.notInstalled.length > 0) {
       this.logger.error(message.notInstalled);
     }
@@ -189,6 +192,5 @@ export class ProfilesManagerTools extends App {
     if (message.installed.length > 0) {
       this.logger.success(message.installed);
     }
-    this.logger.showOutputChannel();
   }
 }
