@@ -9,7 +9,7 @@ With this extension, you can:
 
 ![Reload](files/readme-files/reload.png)
 
-- Enable/Disable
+- Extensions Manager
   
 1. You need to install sqlite or download [binary](https://www.sqlite.org/download.html) and insert path of binary going to settings and follow:
 
@@ -54,5 +54,7 @@ With this extension, you can:
 Install/Uninstall all extension defined on profiles settings
 
 - Convert `XLSX` to `JSON`
+
+Valid extensions: `csv` and `xlsx`
 
 ![ConvertXLSXJSON](files/readme-files/convert-xlsx-json.png)

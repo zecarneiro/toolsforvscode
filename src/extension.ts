@@ -8,7 +8,7 @@ const id = 'jnoronha.toolsforvscode';
 const extensionName = 'Tools For VSCode';
 const totalLibs = 3;
 
-function init(nodeVs: NodeVs, type: number) {
+async function init(nodeVs: NodeVs, type: number) {
   try {
     switch (type) {
       case 1:
@@ -23,7 +23,7 @@ function init(nodeVs: NodeVs, type: number) {
         break;
     }
   } catch (error) {
-    nodeVs.logger.error(error);
+    nodeVs.logger.notify(error?.message);
   }
 }
 

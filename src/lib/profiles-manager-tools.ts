@@ -13,10 +13,14 @@ export class ProfilesManagerTools extends App {
   private readonly config = 'profiles';
 
   constructor(
-    protected nodeVscode: NodeVs,
+    protected nodeVs: NodeVs,
     protected extensionId: string,
   ) {
-    super(nodeVscode, extensionId, 'profiles-manager-tools-jnoronha', 'ProfilesManagerTools');
+    super(nodeVs, extensionId, 'profiles-manager-tools-jnoronha', 'ProfilesManagerTools');
+    const isValidSql = this.nodeVs.sqlite.isValidToContinue();
+    if (isValidSql.hasError) {
+      throw isValidSql.error;
+    }
     this.cmdProfilesManager = this.getCommand('profilesmanager');
     this.prepareAll([
       {
