@@ -1,7 +1,8 @@
 import { QuickPickItem, workspace } from 'vscode';
 import { App } from '../app';
 import { IProfiles } from '../interface/profiles';
-import { NodeVs } from '../vendor/node-vscode-utils/src';
+import { EFunctionsProcessType, Functions, IVsTreeItem, TsJsUtils, Windows } from '../vendor/ts-js-utils/src';
+import { EProfileMessages } from '../enum/profiles-messages';
 
 export class ProfilesManagerTools extends App {
   private profilesData: IProfiles[] = [];
@@ -13,48 +14,31 @@ export class ProfilesManagerTools extends App {
   private readonly config = 'profiles';
 
   constructor(
-    protected nodeVs: NodeVs,
+    protected tsJsUtils: TsJsUtils,
     protected extensionId: string,
   ) {
-    super(nodeVs, extensionId, 'profiles-manager-tools-jnoronha', 'ProfilesManagerTools');
-    const isValidSql = this.nodeVs.sqlite.isValidToContinue();
-    if (isValidSql.hasError) {
-      throw isValidSql.error;
-    }
-    this.cmdProfilesManager = this.getCommand('profilesmanager');
-    this.prepareAll([
+    super(tsJsUtils, extensionId, 'profiles-manager-tools-jnoronha', 'ProfilesManagerTools');
+  }
+
+  protected getActivityBar(): IVsTreeItem[] {
+    return [
       {
         treeItem: {
-          label: 'Install Extensions',
+          label: 'Install extensions',
           command: { command: this.getCommand('extensionsinstall'), title: '' },
         },
         callback: {
-          caller: this.InstallUninstallExt,
-          args: [true],
-          isSync: true,
+          caller: Functions.callbackProcess<any>(this.installUninstallExt, this, EFunctionsProcessType.bind, true),
           thisArg: this,
         },
       },
       {
         treeItem: {
-          label: 'Uninstall Extensions',
+          label: 'Uninstall extensions',
           command: { command: this.getCommand('extensionsuninstall'), title: '' },
         },
         callback: {
-          caller: this.InstallUninstallExt,
-          args: [false],
-          isSync: true,
-          thisArg: this,
-        },
-      },
-      {
-        treeItem: {
-          label: 'Show Status all Extensions',
-          command: { command: this.getCommand('extensionsunshowstatus'), title: '' },
-        },
-        callback: {
-          caller: this.showStatus,
-          isSync: true,
+          caller: Functions.callbackProcess<any>(this.installUninstallExt, this, EFunctionsProcessType.bind, false),
           thisArg: this,
         },
       },
@@ -64,31 +48,92 @@ export class ProfilesManagerTools extends App {
           command: { command: this.getCommand('extensionsrefreshtimedisabled'), title: 'Time to get all disabled extensions from database' },
         },
         callback: {
-          caller: this.configRefreshTimeDb,
-          isSync: true,
+          caller: () => {
+            Windows.createInputBoxVs({
+              placeHolder: '2',
+              prompt: 'Insert time refresh in minutes',
+              value: this.tsJsUtils.extensionManagerVs.refreshTime.toString(),
+            }).then((res) => {
+              this.tsJsUtils.extensionManagerVs.refreshTime = parseInt(res);
+            });
+          },
           thisArg: this,
         },
       },
-    ]);
-    this.nodeVs.vsConsole.registerVscodeCommand([
+      {
+        treeItem: {
+          label: 'Profiles example',
+          command: { command: this.getCommand('profilesexamples'), title: '' },
+        },
+        callback: {
+          caller: Functions.callbackProcess<any>(this.profilesExample, this, EFunctionsProcessType.bind),
+          thisArg: this,
+        },
+      },
+      {
+        treeItem: {
+          label: 'Show status of profiles',
+          command: { command: this.getCommand('extensionsunshowstatus'), title: '' },
+        },
+        callback: {
+          caller: Functions.callbackProcess<any>(this.showStatus, this, EFunctionsProcessType.bind),
+          thisArg: this,
+        },
+      },
+    ];
+  }
+
+  protected process() {
+    const isValidSql = this.tsJsUtils.sqlite.isValidToContinue();
+    if (isValidSql.hasError) {
+      throw isValidSql.error;
+    }
+    this.cmdProfilesManager = this.getCommand('profilesmanager');
+    this.tsJsUtils.console.registerCommandVs([
       {
         command: this.cmdProfilesManager,
         callback: {
-          caller: this.createMenu,
-          isSync: true,
+          caller: Functions.callbackProcess<any>(this.createMenu, this, EFunctionsProcessType.bind),
           thisArg: this,
         },
       },
     ]);
-    this.nodeVs.vsWindowsManager.createStatusBar({ text: 'Profiles Manager', command: this.cmdProfilesManager });
-
-    // Functions
+    Windows.createStatusBarVs({ text: 'Profiles', command: this.cmdProfilesManager });
     this.prepareProfiles();
     workspace.onDidChangeConfiguration((listener) => {
       if (listener.affectsConfiguration(this.config)) {
         this.prepareProfiles();
       }
     });
+  }
+
+  private async createMenu() {
+    const items: QuickPickItem[] = [];
+    this.profilesData.forEach((element) => {
+      let canPicked = true;
+      element.data.forEach((id) => {
+        if (canPicked && (!this.tsJsUtils.extensionManagerVs.isInstalled(id) || this.tsJsUtils.extensionManagerVs.isDisabled(id))) {
+          canPicked = false;
+        }
+      });
+      items.push({ label: element.name, picked: canPicked });
+    });
+    const selectedItems = await Windows.createQuickPickVs<QuickPickItem[]>(items, { canPickMany: true });
+    if (selectedItems) {
+      this.showProcessing();
+      let ids: string[] = [];
+      for (const profile of this.profilesData) {
+        if (!selectedItems.find((val) => val.label === profile.name) && !profile.hide) {
+          ids = ids.concat(profile.data);
+        }
+      }
+      const response = this.tsJsUtils.extensionManagerVs.disable(ids);
+      if (response.hasError) {
+        this.logger.error(response.error);
+      } else {
+        this.logger.success(EProfileMessages.restartMessage);
+      }
+    }
   }
 
   private getConfig(): IProfiles[] {
@@ -104,56 +149,11 @@ export class ProfilesManagerTools extends App {
     });
   }
 
-  private createMenu() {
-    const items: QuickPickItem[] = [];
-    this.profilesData.forEach((element) => {
-      let canPicked = true;
-      element.data.forEach((id) => {
-        if (canPicked && (this.nodeVs.vsExtensionsManager.isDisabled(id) || !this.nodeVs.vsExtensionsManager.isInstalled(id))) {
-          canPicked = false;
-        }
-      });
-      items.push({ label: element.name, picked: canPicked });
-    });
-    this.nodeVs.vsWindowsManager.createQuickPick<QuickPickItem[]>(items, { canPickMany: true }).then((selectedItems) => {
-      // User made final selection
-      if (!selectedItems) {
-        return;
-      } else {
-        this.nodeVs.vsWindowsManager.showProcessingMsg();
-        let ids: string[] = [];
-        for (const profile of this.profilesData) {
-          if (!selectedItems.find((val) => val.label === profile.name) && !profile.hide) {
-            ids = ids.concat(profile.data);
-          }
-        }
-        const response = this.nodeVs.vsExtensionsManager.disable(ids);
-        if (response.hasError) {
-          this.logger.showOutputChannel();
-          this.logger.error(response.error);
-        } else {
-          this.nodeVs.vsExtensionsManager.showSuccessMsg();
-        }
-      }
-    });
-  }
-
-  private configRefreshTimeDb() {
-    this.nodeVs.vsWindowsManager.createInputBox({
-      placeHolder: '2',
-      prompt: 'Insert time refresh in minutes',
-      value: this.nodeVs.vsExtensionsManager.refreshTime.toString(),
-    }).then((res) => {
-      this.nodeVs.vsExtensionsManager.refreshTime = parseInt(res);
-    });
-  }
-
   // eslint-disable-next-line valid-jsdoc
   /** *****************************************************
    * Install/Uninstall Area
    ******************************************************/
-  private InstallUninstallExt(isInstall: boolean) {
-    this.nodeVs.vsWindowsManager.showProcessingMsg();
+  private async installUninstallExt(isInstall: boolean): Promise<any> {
     const ids: string[] = [];
     const profileConfig = this.getSettings<IProfiles[]>(this.config);
     if (profileConfig && profileConfig.length > 0) {
@@ -164,37 +164,91 @@ export class ProfilesManagerTools extends App {
           }
         }
       }
-      this.logger.showOutputChannel();
-      if (isInstall) {
-        this.nodeVs.vsExtensionsManager.installExtensions(ids);
-      } else {
-        this.nodeVs.vsExtensionsManager.uninstallExtensions(ids);
-      }
+      await this.tsJsUtils.extensionManagerVs.installUninstallExtensions(ids, isInstall);
     }
   }
 
   private showStatus() {
-    const message = { disabled: '', installed: '', notInstalled: '' };
+    const css = `
+    table, th, td {
+      border:1px solid black;
+    }
+    table, h2 {
+      align: center;
+      width:50%;
+    }
+    th, td, h2 {
+      text-align: center;
+    }
+    `;
+    let data = '';
     for (const config of this.getConfig()) {
-      config.data.forEach((id) => {
-        if (this.nodeVs.vsExtensionsManager.isDisabled(id)) {
-          message.disabled += `Extension id: '${id}' is disabled!\n`;
-        } else if (this.nodeVs.vsExtensionsManager.isInstalled(id)) {
-          message.installed += `Extension id: '${id}' is installed!\n`;
-        } else {
-          message.notInstalled += `Extension id: '${id}' is 'not installed'!\n`;
-        }
-      });
+      if (config.data.length > 0) {
+        data += `<h2>${config.name}</h2>`;
+        data += `<table><tr><th style="width:70%">Extension ID</th><th>Status</th></tr>`;
+        config.data.forEach((id) => {
+          if (this.tsJsUtils.extensionManagerVs.isDisabled(id)) {
+            data += `<tr><td style="width:70%">${id}</td><td>Disabled</td></tr>`;
+          } else if (!this.tsJsUtils.extensionManagerVs.isInstalled(id)) {
+            data += `<tr><td style="width:70%">${id}</td><td style="color:red">Not Instaled</td></tr>`;
+          } else {
+            data += `<tr><td style="width:70%">${id}</td><td style="color:green">Enabled</td></tr>`;
+          }
+        });
+        data += `</table>`;
+      }
     }
-    this.logger.showOutputChannel();
-    if (message.notInstalled.length > 0) {
-      this.logger.error(message.notInstalled);
-    }
-    if (message.disabled.length > 0) {
-      this.logger.warn(message.disabled);
-    }
-    if (message.installed.length > 0) {
-      this.logger.success(message.installed);
-    }
+    Windows.showWebViewHTMLVs(data, 'Status of all extension based on profiles defined', css);
+  }
+
+  private profilesExample() {
+    const body = `<pre>
+    [
+      {
+          "name": "VSCode",
+          "hide": true,
+          "data": [
+              "mkxml.vscode-filesize",
+              "ms-devlabs.extension-manifest-editor"
+          ]
+      },
+      {
+          "name": "Themes",
+          "hide": true,
+          "data": [
+              "rokoroku.vscode-theme-darcula",
+              "vscode-icons-team.vscode-icons",
+              "orepor.color-tabs-vscode-ext"
+          ]
+      },
+      {
+          "name": "Generic",
+          "hide": true,
+          "data": [
+              "vincaslt.highlight-matching-tag",
+              "stylelint.vscode-stylelint",
+              "usernamehw.errorlens",
+              "hediet.debug-visualizer",
+              "formulahendry.code-runner"
+          ]
+      },
+      {
+          "name": "Multi-Profile Dependencies",
+          "hide": true,
+          "data": [
+              "Pivotal.vscode-manifest-yaml", // Spring, YML
+              "pivotal.vscode-concourse", // Spring, CI-CD
+              "redhat.vscode-yaml" // XML/HTML, OpenAPI
+          ]
+      },
+      {
+          "name": "Git/CI-CD",
+          "data": [
+              "eamodio.gitlens",
+              "rubbersheep.gi"
+          ]
+      }
+    ]</pre>`;
+    Windows.showWebViewHTMLVs(body, 'Example of Profiles');
   }
 }
