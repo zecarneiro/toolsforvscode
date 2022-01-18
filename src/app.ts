@@ -37,10 +37,6 @@ export abstract class App {
     return `${VsExtensionsManager.getExtensionInfo(this.extensionId).name}.${this.className}${name}`;
   }
 
-  protected showProcessing() {
-    this.logger.info('Processing');
-  }
-
   protected abstract process();
   protected abstract getActivityBar(): IVsTreeItemWithChildren[] | IVsTreeItem[];
 

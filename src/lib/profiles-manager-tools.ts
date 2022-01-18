@@ -120,7 +120,6 @@ export class ProfilesManagerTools extends App {
     });
     const selectedItems = await Windows.createQuickPickVs<QuickPickItem[]>(items, { canPickMany: true });
     if (selectedItems) {
-      this.showProcessing();
       let ids: string[] = [];
       for (const profile of this.profilesData) {
         if (!selectedItems.find((val) => val.label === profile.name) && !profile.hide) {
