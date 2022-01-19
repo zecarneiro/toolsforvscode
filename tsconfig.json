@@ -1,16 +1,22 @@
 {
 	"compilerOptions": {
-        "experimentalDecorators": true,
+		"experimentalDecorators": true,
+		"target": "es5",
+		"lib": [
+			"es2017",
+			"es2015",
+			"dom",
+			"es6"
+		],
 		"module": "commonjs",
-		"declaration": true,
-		"target": "es6",
 		"outDir": "dist",
-		"lib": ["es2017", "es7", "es6", "dom"],
-		"sourceMap": true,
+		"sourceMap": false,
 		"strict": false,
-		"esModuleInterop": true,
+		"declaration": false
 	},
-	"include": ["src/**/*.ts"],
+	"include": [
+		"src/**/*.ts"
+	],
 	"exclude": [
 		".vscode-test",
 		"files",

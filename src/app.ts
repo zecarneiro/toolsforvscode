@@ -1,48 +1,52 @@
-import { VsExtensionsManager } from './vendor/ts-js-utils/src/lib/vs-extensions-manager';
+import { EntityBaseName } from 'node-ts-js-utils';
+import { FileSystem, ITreeItem, ITreeItemWithChildren, Logger, VscodeTsJsUtils } from 'vscode-ts-js-utils';
 import { IDirectories } from './interface/directories';
-import { EntityBaseName, FileSystem, IVsTreeItem, IVsTreeItemWithChildren, Logger, TsJsUtils } from './vendor/ts-js-utils/src';
 
 export abstract class App {
   protected currentMethod: string = '';
-  protected readonly extensionPath: string = FileSystem.resolvePath(this.tsJsUtils.extensionManagerVs.getPath() + '/dist');
+  protected readonly extensionPath: string = this.utils.fileSystem.resolvePath(this.utils.extensions.getPath() + '/dist');
   protected readonly directories: IDirectories = {
-    files: FileSystem.resolvePath(this.extensionPath + '/../files'),
-    scripts: FileSystem.resolvePath(this.extensionPath + '/../scripts'),
+    files: this.fileSystem.resolvePath(this.extensionPath + '/../files'),
+    scripts: this.fileSystem.resolvePath(this.extensionPath + '/../scripts'),
   };
   protected readonly scriptsToSystem = {
-    linux: FileSystem.resolvePath(this.directories.scripts + '/to-linux.sh'),
-    windows: FileSystem.resolvePath(this.directories.scripts + '/to-windows.ps1'),
+    linux: this.fileSystem.resolvePath(this.directories.scripts + '/to-linux.sh'),
+    windows: this.fileSystem.resolvePath(this.directories.scripts + '/to-windows.ps1'),
   };
 
   constructor(
-    protected tsJsUtils: TsJsUtils,
+    protected utils: VscodeTsJsUtils,
     protected extensionId: string,
     protected activityBarId: string,
     protected className: string,
   ) { }
 
   protected get logger(): Logger {
-    this.tsJsUtils.logger.className = this.className;
-    this.tsJsUtils.logger.methodName = this.currentMethod;
-    return this.tsJsUtils.logger;
+    this.utils.logger.className = this.className;
+    this.utils.logger.methodName = this.currentMethod;
+    return this.utils.logger;
+  }
+
+  protected get fileSystem(): FileSystem {
+    return this.utils.fileSystem;
   }
 
   @EntityBaseName
   protected getSettings<T = any>(section?: string): T {
-    return VsExtensionsManager.getExtensionSettings<T>(this.extensionId, section);
+    return this.utils.extensions.getExtensionSettings<T>(this.extensionId, section);
   }
 
   @EntityBaseName
   protected getCommand(name: string): string {
-    return `${VsExtensionsManager.getExtensionInfo(this.extensionId).name}.${this.className}${name}`;
+    return `${this.utils.extensions.getExtensionInfo(this.extensionId).name}.${this.className}${name}`;
   }
 
   protected abstract process();
-  protected abstract getActivityBar(): IVsTreeItemWithChildren[] | IVsTreeItem[];
+  protected abstract getActivityBar(): ITreeItemWithChildren[] | ITreeItem[];
 
   start() {
     try {
-      this.tsJsUtils.windows.createActivityBarVs(this.getActivityBar(), this.activityBarId);
+      this.utils.windows.createActivityBar(this.getActivityBar(), this.activityBarId);
       this.process();
     } catch (error) {
       this.logger.error(error?.message);

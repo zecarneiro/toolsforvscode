@@ -1,37 +1,41 @@
 import { OthersTools } from './lib/others-tools';
 import { ProfilesManagerTools } from './lib/profiles-manager-tools';
 import * as vscode from 'vscode';
-import { TsJsUtils, VsExtensionsManager } from './vendor/ts-js-utils/src';
+import { VscodeTsJsUtils } from 'vscode-ts-js-utils/dist';
 
 const id = 'jnoronha.toolsforvscode';
 const extensionName = 'Tools For VSCode';
 const totalLibs = 2;
 
-async function init(tsJsUtils: TsJsUtils, type: number) {
+async function init(utils: VscodeTsJsUtils, type: number) {
   try {
     switch (type) {
       case 0:
-        new OthersTools(tsJsUtils, id).start();
+        new OthersTools(utils, id).start();
         break;
       case 1:
       default:
-        new ProfilesManagerTools(tsJsUtils, id).start();
+        new ProfilesManagerTools(utils, id).start();
         break;
     }
   } catch (error) {
-    tsJsUtils.logger.notifyVs(error?.message);
+    utils.logger.notify(error?.message);
   }
 }
 
-function setCustomConfig(tsJsUtils: TsJsUtils) {
-  tsJsUtils.sqlite.command = VsExtensionsManager.getExtensionSettings<string>(id, 'sqlite-command');
+function setCustomConfig(utils: VscodeTsJsUtils) {
+  utils.sqlite.command = utils.extensions.getExtensionSettings<string>(id, 'sqlite-command');
 }
 
 export function activate(context: vscode.ExtensionContext) {
-  const tsJsUtils: TsJsUtils = new TsJsUtils(extensionName, context);
-  setCustomConfig(tsJsUtils);
-  for (let i = 0; i < totalLibs; ++i) {
-    init(tsJsUtils, i);
+  try {
+    const utils: VscodeTsJsUtils = new VscodeTsJsUtils(extensionName, context);
+    setCustomConfig(utils);
+    for (let i = 0; i < totalLibs; ++i) {
+      init(utils, i);
+    }
+  } catch (error) {
+    console.log(error.message);
   }
 }
 
