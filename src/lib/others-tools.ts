@@ -76,17 +76,17 @@ export class OthersTools extends App {
           this.utils.windows.showTextDocument(tempFile);
         }
       } else {
-        this.logger.error('This file: ' + fileInfo.data.basename + ' doesn\'t have any sheet');
+        this.logger.error(new Error('This file: ' + fileInfo.data.basename + ' doesn\'t have any sheet'));
       }
     } else {
-      this.logger.error('Invalid file: ' + fileInfo.data.filename);
+      this.logger.error(new Error('Invalid file: ' + fileInfo.data.filename));
     }
   }
 
   private async generateVsixPackages() {
     const vsceCmd = this.utils.console.findCommand('vsce', false);
     if (vsceCmd.hasError || !vsceCmd.data) {
-      this.logger.error('Please, install vsce: npm install -g vsce');
+      this.logger.error(new Error('Please, install vsce: npm install -g vsce'));
       return;
     }
     const result = await this.utils.windows.showOpenDialog<Uri>({ canSelectFolders: true });
@@ -139,7 +139,7 @@ export class OthersTools extends App {
   private async createNewExtensions() {
     const findCmd = this.utils.console.findCommand('yo', false);
     if (findCmd.hasError || !findCmd.data) {
-      this.logger.error('Please, install necessary packages: npm install -g yo generator-code');
+      this.logger.error(new Error('Please, install necessary packages: npm install -g yo generator-code'));
       return;
     }
     const result = await this.utils.windows.showOpenDialog<Uri>({ canSelectFolders: true });

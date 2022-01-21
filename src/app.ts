@@ -1,6 +1,6 @@
 import { EntityBaseName } from 'node-ts-js-utils';
 import { FileSystem, ITreeItem, ITreeItemWithChildren, Logger, VscodeTsJsUtils } from 'vscode-ts-js-utils';
-import { IDirectories } from './interface/directories';
+import { IDirectories } from './interface/Idirectories';
 
 export abstract class App {
   protected currentMethod: string = '';
@@ -49,7 +49,7 @@ export abstract class App {
       this.utils.windows.createActivityBar(this.getActivityBar(), this.activityBarId);
       this.process();
     } catch (error) {
-      this.logger.error(error?.message);
+      this.logger.error(error);
     }
   }
 }

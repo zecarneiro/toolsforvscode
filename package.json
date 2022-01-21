@@ -6,7 +6,7 @@
 	"name": "toolsforvscode",
 	"displayName": "Tools for VSCode",
 	"description": "Collapse, Expand, Reload and Enable, Disable, Install and Uninstall Extensions",
-	"version": "3.2.7",
+	"version": "3.2.8",
 	"engines": {
 		"vscode": "^1.63.1"
 	},
@@ -64,7 +64,8 @@
 		"package": "node ./scripts/build/build.js build production ./src/extension.ts --binName extension.js  -v",
 		"watch": "tsc -watch -p tsconfig.json",
 		"pretest": "npm run compile",
-		"test": "node ./out/test/runTest.js"
+		"test": "node ./out/test/runTest.js",
+		"clean": "node ./scripts/build/build.js clean"
 	},
 	"files": [
 		"dist/**/*",

@@ -2,8 +2,8 @@ import { EFunctionsProcessType, Functions } from 'node-ts-js-utils';
 import { VscodeTsJsUtils, ITreeItem } from 'vscode-ts-js-utils';
 import { QuickPickItem, workspace } from 'vscode';
 import { App } from '../app';
-import { IProfiles } from '../interface/profiles';
-import { EProfileMessages } from '../enum/profiles-messages';
+import { IProfiles } from '../interface/Iprofiles';
+import { EProfileMessages } from '../enum/Eprofiles-messages';
 
 export class ProfilesManagerTools extends App {
   private profilesData: IProfiles[] = [];

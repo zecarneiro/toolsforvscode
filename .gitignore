@@ -1,11 +1,11 @@
-/out/*
-/node_modules/*
-/.vscode/*
+
+node_modules
+.vscode
 *.vsix
-/test/*
-/dist/*
-/utils/*
+test/*
+dist
 /files/sqlite3/*
 !/.vscode/launch.json
 !/.vscode/settings.json
 !/.vscode/tasks.json
+/package-lock.json
