@@ -1,18 +1,12 @@
 {
 	"compilerOptions": {
-		"experimentalDecorators": true,
-		"target": "es5",
-		"lib": [
-			"es2017",
-			"es2015",
-			"dom",
-			"es6"
-		],
 		"module": "commonjs",
+        "target": "es6",
 		"outDir": "dist",
-		"sourceMap": false,
-		"strict": false,
-		"declaration": false
+		"sourceMap": true,
+		"strict": true,
+		"declaration": false,
+		"esModuleInterop": true,
 	},
 	"include": [
 		"src/**/*.ts"
